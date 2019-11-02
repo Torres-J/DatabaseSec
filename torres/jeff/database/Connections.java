@@ -1,4 +1,4 @@
-package torres.stig.program;
+package torres.jeff.database;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class Connections {
 	private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
-	private static final String JDBC_URL = "jdbc:derby:MyDB;create=true";
+	private static final String JDBC_URL = "jdbc:derby:VulnerabilityDB;create=true";
 	
 	public static Connection ConnectDB() throws SQLException, ClassNotFoundException {
 		Class.forName(DRIVER);
