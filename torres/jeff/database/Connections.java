@@ -16,15 +16,11 @@ public class Connections {
 	private static final String DRIVER = "org.apache.derby.jdbc.EmbeddedDriver";
 	private static final String JDBC_URL = "jdbc:derby:VulnerabilityDB;create=true";
 	
-	public static Connection ConnectDB() throws SQLException, ClassNotFoundException {
+	public Connection ConnectDB() throws SQLException, ClassNotFoundException {
 		Class.forName(DRIVER);
 		Connection connection = DriverManager.getConnection(JDBC_URL);
 		return connection;
 	}
 	
-	public static ResultSet resultSet(String query) throws ClassNotFoundException, SQLException {
-		ResultSet results = ConnectDB().createStatement().executeQuery(query);
-		return results;
-	}
 	
 }
