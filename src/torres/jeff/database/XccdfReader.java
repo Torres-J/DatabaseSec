@@ -2,6 +2,8 @@ package torres.jeff.database;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,8 +17,9 @@ import org.xml.sax.SAXException;
 
 public class XccdfReader {
 
-	public static void go() {
-		File inputFile = new File("C:\\Users\\jeffrey.m.torres2\\Desktop\\Java\\XmlTest\\dotnet.xml");
+	public static void go(Connection db) throws SQLException {
+		
+		File inputFile = new File("C:\\Users\\Torre\\git\\DatabaseSec\\XCCDFEXAMPLE.XML");
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		ArrayList<String> sysInfo = new ArrayList<String>();
@@ -50,9 +53,13 @@ public class XccdfReader {
 	        }
 	        
 	        for (int i = 0; i < results.size(); i++) {
-	        	String export = sysInfo.get(1) + "," + results.get(i).toString().replace(" ", "") + "," + sysInfo.get(0);
-	        	System.out.println(export);
+	        	   	
+	        	String export = sysInfo.get(1).replace(",", "','") + "','" + results.get(i).toString().replace(" ", "").replace(",", "','") + "','" + sysInfo.get(0).replace(",", "','");
+	        	db.createStatement().execute("INSERT INTO dbo.Stage_xc (Host_Name, V_ID, Status, STIG) VALUES ('" + export + "')");
+	        	
 	        }
+        	db.createStatement().execute("DELETE FROM dbo.Stage_xc");
+
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -64,6 +71,7 @@ public class XccdfReader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 
 	}
 }
