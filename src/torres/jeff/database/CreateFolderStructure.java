@@ -17,5 +17,10 @@ public class CreateFolderStructure {
 		if (!settingsDirectory.exists()) {
 			settingsDirectory.mkdir();
 		}
+		String stigDrop = mainDirectory + "/STIG_Drop";
+		File stigDirectory = new File(stigDrop);
+		if (!stigDirectory.exists()) {
+			stigDirectory.mkdir();
+		}
 }
 }
