@@ -6,6 +6,19 @@ import java.io.IOException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+/* public static void main(String[] args) throws IOException {
+		StigUpdater zip = new StigUpdater();
+		String userDir = System.getProperty("user.dir");
+		File zipFile = new File(userDir);
+		for (File f : zipFile.listFiles()) {
+			if (f.toString().contains(".zip")) {
+				String fi = f.toString();
+				zip.unzip(fi, userDir);
+			}
+		}
+
+	}*/
+
 public class StigUpdater {
 
     public static void unzip(String zipFilePath, String destDir) {
