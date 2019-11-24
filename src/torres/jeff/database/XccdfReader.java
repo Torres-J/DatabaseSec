@@ -1,77 +1,95 @@
 package torres.jeff.database;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 public class XccdfReader {
 
-	public static void go(Connection db) throws SQLException {
-		
-		File inputFile = new File("C:\\Users\\Torre\\git\\DatabaseSec\\XCCDFEXAMPLE.XML");
+	public static void go(Connection db) throws SQLException, InterruptedException, ParserConfigurationException, IOException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
+		builder = factory.newDocumentBuilder();
 		ArrayList<String> sysInfo = new ArrayList<String>();
+		ArrayList<String> vulnIDList = new ArrayList<String>();
 		ArrayList<String> results = new ArrayList<String>();
-		try {
-			builder = factory.newDocumentBuilder();
-			Document doc = builder.parse(inputFile);
-	        doc.getDocumentElement().normalize();
-	        NodeList stigList = doc.getElementsByTagName("cdf:title");
-	        for (int i = 0; i < 1; i++) {
-	            Node nNode = stigList.item(i);
-	            String stig = nNode.getTextContent();
-	            sysInfo.add(stig);
-	        }
-	        
-	        NodeList vID = doc.getElementsByTagName("cdf:rule-result");
-	        for (int i = 0; i < vID.getLength(); i++) {
-	        	NodeList check = doc.getElementsByTagName("cdf:result");
-	        	Node nNode = vID.item(i);
-	        	Node nNode1 = check.item(i);
-	        	String vulnID = nNode.getAttributes().getNamedItem("idref").toString().replace("idref=\"xccdf_mil.disa.stig_rule_", "").replace("\"", "");
-	        	String ruleResult = nNode1.getTextContent().toString();
-	        	results.add(vulnID + ", " + ruleResult);	
-	        }
-	        
-	        NodeList hostName = doc.getElementsByTagName("cdf:target");
-	        for (int i = 0; i < 1; i++) {
-	        	Node nNode = hostName.item(i);
-	        	String targetHost = nNode.getTextContent();
-	        	sysInfo.add(targetHost);	
-	        }
-	        
-	        for (int i = 0; i < results.size(); i++) {
-	        	   	
-	        	String export = sysInfo.get(1).replace(",", "','") + "','" + results.get(i).toString().replace(" ", "").replace(",", "','") + "','" + sysInfo.get(0).replace(",", "','");
-	        	db.createStatement().execute("INSERT INTO dbo.Stage_xc (Host_Name, V_ID, Status, STIG) VALUES ('" + export + "')");
-	        	
-	        }
-        	db.createStatement().execute("DELETE FROM dbo.Stage_xc");
+		while (ThreadController.threadsActive) {
+			TimeUnit.SECONDS.sleep(1);
+			File inputFiles = CreateFolderStructure.workspacePathXccdfDrop;
+			File[] inputFilesList = inputFiles.listFiles();
+			for (File xmlFile : inputFilesList) {
+				InputStream inputStream = new FileInputStream(xmlFile);
+				try {
+					Document doc = builder.parse(inputStream);
+			        doc.getDocumentElement().normalize();
+			        NodeList stigList = doc.getElementsByTagName("cdf:title");
+			        for (int i = 0; i < 1; i++) {
+			            Node nNode = stigList.item(i);
+			            String stig = nNode.getTextContent();
+			            sysInfo.add(stig);
+			        }
+			        
+			        NodeList vID = doc.getElementsByTagName("cdf:Group");
+			        for (int i = 0; i < vID.getLength(); i++) {
+			        	Node nNode = vID.item(i);
+		        		NamedNodeMap v = nNode.getAttributes();
+		        		String vulnID = v.getNamedItem("id").toString().replace("id=\"xccdf_mil.disa.stig_group_", "").replace("\"", "");
+		        		vulnIDList.add(vulnID);
+			        }
+		        		
+			        NodeList vIDs = doc.getElementsByTagName("cdf:rule-result");
+			        for (int i = 0; i < vIDs.getLength(); i++) {
+			        	NodeList check = doc.getElementsByTagName("cdf:result");
+			        	Node nNode1 = check.item(i);
+			        	String ruleResult = nNode1.getTextContent().toString();
+			        	results.add(ruleResult);	
+			        }
+			        
+			        NodeList hostName = doc.getElementsByTagName("cdf:target");
+			        for (int i = 0; i < 1; i++) {
+			        	Node nNode = hostName.item(i);
+			        	String targetHost = nNode.getTextContent();
+			        	sysInfo.add(targetHost);	
+			        }
+			        
+			        for (int i = 0; i < results.size(); i++) {
+			        	   	
+			        	String export = sysInfo.get(1).replace(",", "','") + "','" + vulnIDList.get(i) + "','" + results.get(i).toString().replace(" ", "").replace(",", ",") + "','" + sysInfo.get(0).replace(",", ",");
+			        	db.createStatement().execute("INSERT INTO dbo.Stage_xc (Host_Name, V_ID, Status, STIG) VALUES ('" + export + "')");
+			        	db.createStatement().execute("INSERT INTO dbo.METRICS (Host_Name) VALUES ('" + sysInfo.get(1) + "')");
 
-		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			        }       
+		        	db.createStatement().execute("DELETE FROM dbo.Stage_xc");
 		
-
-	}
+				} catch (Exception e) {
+					inputStream.close();
+					xmlFile.delete();
+					sysInfo.clear();
+					vulnIDList.clear();
+					results.clear();
+					continue;
+					
+				}
+				inputStream.close();
+				xmlFile.delete();
+				sysInfo.clear();
+				vulnIDList.clear();
+				results.clear();
+			} 
+		}
+	}				
 }

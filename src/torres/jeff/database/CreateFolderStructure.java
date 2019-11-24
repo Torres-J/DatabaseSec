@@ -4,6 +4,8 @@ import java.io.File;
 
 public class CreateFolderStructure {
 	
+	public static File workspacePathXccdfDrop;
+	
 	public static void createFolders() {
 		String mainDirectory = System.getProperty("user.dir");
 		String workSpace = mainDirectory + "/WorkSpace";
@@ -12,6 +14,8 @@ public class CreateFolderStructure {
 		if (!xccdfDrop.exists()) {
 			xccdfDrop.mkdirs();
 		}
+		workspacePathXccdfDrop = xccdfDrop;
+		
 		String settings = mainDirectory + "/settings";
 		File settingsDirectory = new File(settings);
 		if (!settingsDirectory.exists()) {

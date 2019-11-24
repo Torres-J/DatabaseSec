@@ -12,9 +12,9 @@ public class CreateTables  {
 	public static void createTables() throws ClassNotFoundException, SQLException {
 		Connection db = new Connections().ConnectDB();
 		try {
-			db.createStatement().execute("CREATE TABLE dbo.Metrics (OU varchar(255), Host_Name varchar(150), Date_Found TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+			db.createStatement().execute("CREATE TABLE dbo.Metrics (OU varchar(255), Host_Name varchar(150), Date_Found DATE NOT NULL DEFAULT CURRENT_DATE)");
 		} catch (Exception e) {
-			
+
 		} try {
 			db.createStatement().execute("CREATE TABLE dbo.Assets (OU varchar(255), Host_Name varchar(150))");
 		} catch (Exception e) {
