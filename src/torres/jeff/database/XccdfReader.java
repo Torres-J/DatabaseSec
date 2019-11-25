@@ -96,12 +96,20 @@ public class XccdfReader {
 				db.createStatement().execute("INSERT INTO dbo.METRICS (Host_Name) SELECT DISTINCT Host_Name FROM dbo.STAGE_XC");
 	        	db.createStatement().execute("DELETE FROM dbo.Stage_xc");
 	        	db.createStatement().execute("DELETE FROM dbo.Ongoing " + 
+	        			"WHERE (Host_Name, V_ID, STIG) IN (" + 
+	        			"SELECT S.Host_Name, S.V_ID, S.STIG " + 
+	        			"FROM DBO.ONGOING AS S " + 
+	        			"JOIN DBO.Completed ON dbo.completed.host_name = S.host_name AND dbo.completed.V_ID = S.V_ID AND dbo.completed.STIG = S.STIG " + 
+	        			"WHERE DBO.Completed.Date_Found > S.Date_Found)");
+			}
+			
+			/*db.createStatement().execute("DELETE FROM dbo.Ongoing " + 
 	        			"WHERE EXISTS (" + 
 	        			"SELECT * " + 
 	        			"FROM DBO.ONGOING " + 
 	        			"JOIN DBO.Completed ON dbo.completed.host_name = dbo.ongoing.host_name AND dbo.completed.V_ID = dbo.Ongoing.V_ID AND dbo.completed.STIG = dbo.Ongoing.STIG " + 
 	        			"WHERE DBO.Completed.Date_Found > DBO.Ongoing.Date_Found)");
-			}
+			}*/
 	        catch (Exception e) {
 	        	errorLog.log(Level.SEVERE, "XccdfReader Database Appending Error", e);
 	        }
