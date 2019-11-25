@@ -8,6 +8,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +23,7 @@ import org.w3c.dom.NodeList;
 public class XccdfReader {
 
 	public static void go(Connection db) throws SQLException, InterruptedException, ParserConfigurationException, IOException {
+		Logger errorLog = new ErrorLogging().logger(XccdfReader.class.getName(), "XccdfReader.log", Level.WARNING);
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		builder = factory.newDocumentBuilder();
@@ -74,6 +77,7 @@ public class XccdfReader {
 			        }  
 
 				} catch (Exception e) {
+					errorLog.log(Level.WARNING, xmlFile.getName().toString() + " Could not parse", e);
 					inputStream.close();
 					xmlFile.delete();
 					sysInfo.clear();
@@ -88,14 +92,20 @@ public class XccdfReader {
 				vulnIDList.clear();
 				results.clear();
 			} 
-			db.createStatement().execute("INSERT INTO dbo.METRICS (Host_Name) SELECT DISTINCT Host_Name FROM dbo.STAGE_XC");
-        	db.createStatement().execute("DELETE FROM dbo.Stage_xc");
-        	db.createStatement().execute("DELETE FROM dbo.Ongoing " + 
-        			"WHERE EXISTS (" + 
-        			"SELECT * " + 
-        			"FROM DBO.ONGOING " + 
-        			"JOIN DBO.Completed ON dbo.completed.host_name = dbo.ongoing.host_name AND dbo.completed.V_ID = dbo.Ongoing.V_ID AND dbo.completed.STIG = dbo.Ongoing.STIG " + 
-        			"WHERE DBO.Completed.Date_Found > DBO.Ongoing.Date_Found)");
+			try {
+				db.createStatement().execute("INSERT INTO dbo.METRICS (Host_Name) SELECT DISTINCT Host_Name FROM dbo.STAGE_XC");
+	        	db.createStatement().execute("DELETE FROM dbo.Stage_xc");
+	        	db.createStatement().execute("DELETE FROM dbo.Ongoing " + 
+	        			"WHERE EXISTS (" + 
+	        			"SELECT * " + 
+	        			"FROM DBO.ONGOING " + 
+	        			"JOIN DBO.Completed ON dbo.completed.host_name = dbo.ongoing.host_name AND dbo.completed.V_ID = dbo.Ongoing.V_ID AND dbo.completed.STIG = dbo.Ongoing.STIG " + 
+	        			"WHERE DBO.Completed.Date_Found > DBO.Ongoing.Date_Found)");
+			}
+	        catch (Exception e) {
+	        	errorLog.log(Level.SEVERE, "XccdfReader Database Appending Error", e);
+	        }
+	        		
+	        }
 		}
 	}				
-}

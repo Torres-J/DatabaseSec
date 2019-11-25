@@ -1,11 +1,19 @@
 package torres.jeff.database;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class Triggers {
 	
-	public static void setTriggers(Connection db) throws SQLException {
+	public static void setTriggers(Connection db) throws SQLException, SecurityException, IOException {
+		
+		Logger errorLog = new ErrorLogging().logger(Triggers.class.getName(), "Trigger.log", Level.WARNING);
+		
 		// This was originally meant to update the dbo.metrics table, but that is now going to be added to the XccdfReader and CklReader
 		/*try {
 			// After a new record is imported from xccdf or ckl, the hostname and date uploaded is added to the main metrics table
