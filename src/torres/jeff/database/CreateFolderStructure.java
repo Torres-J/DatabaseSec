@@ -10,6 +10,12 @@ public class CreateFolderStructure {
 		String mainDirectory = System.getProperty("user.dir");
 		String workSpace = mainDirectory + "/WorkSpace";
 		
+		String cklDrop = mainDirectory + "/cklDrop_Drop";
+		File cklDirectory = new File(cklDrop);
+		if (!cklDirectory.exists()) {
+			cklDirectory.mkdir();
+		}
+		
 		File xccdfDrop = new File(workSpace + "/xccdfDrop");
 		if (!xccdfDrop.exists()) {
 			xccdfDrop.mkdirs();

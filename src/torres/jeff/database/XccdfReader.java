@@ -70,11 +70,9 @@ public class XccdfReader {
 			        	   	
 			        	String export = sysInfo.get(1).replace(",", "','") + "','" + vulnIDList.get(i) + "','" + results.get(i).toString().replace(" ", "").replace(",", ",") + "','" + sysInfo.get(0).replace(",", ",");
 			        	db.createStatement().execute("INSERT INTO dbo.Stage_xc (Host_Name, V_ID, Status, STIG) VALUES ('" + export + "')");
-			        	db.createStatement().execute("INSERT INTO dbo.METRICS (Host_Name) VALUES ('" + sysInfo.get(1) + "')");
+			     
+			        }  
 
-			        }       
-		        	db.createStatement().execute("DELETE FROM dbo.Stage_xc");
-		
 				} catch (Exception e) {
 					inputStream.close();
 					xmlFile.delete();
@@ -90,6 +88,14 @@ public class XccdfReader {
 				vulnIDList.clear();
 				results.clear();
 			} 
+			db.createStatement().execute("INSERT INTO dbo.METRICS (Host_Name) SELECT DISTINCT Host_Name FROM dbo.STAGE_XC");
+        	db.createStatement().execute("DELETE FROM dbo.Stage_xc");
+        	db.createStatement().execute("DELETE FROM dbo.Ongoing " + 
+        			"WHERE EXISTS (" + 
+        			"SELECT * " + 
+        			"FROM DBO.ONGOING " + 
+        			"JOIN DBO.Completed ON dbo.completed.host_name = dbo.ongoing.host_name AND dbo.completed.V_ID = dbo.Ongoing.V_ID AND dbo.completed.STIG = dbo.Ongoing.STIG " + 
+        			"WHERE DBO.Completed.Date_Found > DBO.Ongoing.Date_Found)");
 		}
 	}				
 }

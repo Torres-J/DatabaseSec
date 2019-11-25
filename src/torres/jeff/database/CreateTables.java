@@ -40,8 +40,15 @@ public class CreateTables  {
 		} catch (Exception e) {
 			
 		}
+		try {
+		db.createStatement().execute("CREATE TABLE dbo.Completed ("
+				+ "V_ID varchar(255),"
+				+ "Host_Name varchar(255),"
+				+ "Status varchar(20),"
+				+ "STIG varchar(300),"
+				+ "Date_Found TIMESTAMP NOT NULL)");
+		} catch (Exception e) {
+			
+		}
 	}
-	
-	
-
 }
