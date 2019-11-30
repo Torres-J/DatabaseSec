@@ -18,12 +18,14 @@ import org.w3c.dom.NodeList;
 public class Main {
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, InterruptedException, ParserConfigurationException, IOException {
-		
+		/*
 		CreateFolderStructure.createFolders();
 		Connection db = new Connections().ConnectDB();
 		CreateTables.createTables();
 		Triggers.setTriggers(db);
 		XccdfReader.go(db);
-		
+		*/
+		StigUpdater u = new StigUpdater();
+		u.runStigUpdate();
 	}
 }

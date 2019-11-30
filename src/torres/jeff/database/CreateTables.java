@@ -32,8 +32,8 @@ public class CreateTables  {
 		}
 		try {
 		db.createStatement().execute("CREATE TABLE dbo.Ongoing ("
-				+ "V_ID varchar(255),"
-				+ "Host_Name varchar(255),"
+				+ "V_ID varchar(15),"
+				+ "Host_Name varchar(150),"
 				+ "Status varchar(20),"
 				+ "STIG varchar(300),"
 				+ "Date_Found TIMESTAMP NOT NULL)");
@@ -42,11 +42,22 @@ public class CreateTables  {
 		}
 		try {
 		db.createStatement().execute("CREATE TABLE dbo.Completed ("
-				+ "V_ID varchar(255),"
-				+ "Host_Name varchar(255),"
+				+ "V_ID varchar(15),"
+				+ "Host_Name varchar(150),"
 				+ "Status varchar(20),"
 				+ "STIG varchar(300),"
 				+ "Date_Found TIMESTAMP NOT NULL)");
+		} catch (Exception e) {
+			
+		}
+		try {
+		db.createStatement().execute("CREATE TABLE dbo.Stigs_Table ("
+				+ "V_ID varchar(15),"
+				+ "Severity varchar(20),"
+				+ "Title varchar(500),"
+				+ "Check_Text varchar(5000),"
+				+ "Fix_Text varchar(5000),"
+				+ "STIG varchar(300))");
 		} catch (Exception e) {
 			
 		}
