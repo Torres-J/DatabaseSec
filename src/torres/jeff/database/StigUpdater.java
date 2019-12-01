@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -71,7 +74,8 @@ public class StigUpdater {
         
     }
     
-    public void runStigUpdate() throws ParserConfigurationException {
+    public void runStigUpdate(Connection db) throws ParserConfigurationException, SQLException {
+    	PreparedStatement pS = db.prepareStatement("INSERT INTO dbo.Stig_Table VALUES (?,?,?,?,?,?)");
     	File stigDrop = new File("WorkSpace/STIG_Drop");
     	File[] listXML = stigDrop.listFiles();
     	for (File xmlDoc : listXML) {
@@ -120,15 +124,24 @@ public class StigUpdater {
     			NodeList stigTitle = doc.getElementsByTagName("title");
     			Node ruleNode = stigTitle.item(0);
     			String stig = ruleNode.getTextContent();
-    			currStig = stig;
-    			
+    			currStig = stig.toUpperCase();
+    			db.createStatement().execute("DELETE FROM dbo.Stig_Table WHERE Stig = '" + currStig + "'");
     			for (int i = 0; i < vIDList.size(); i++) {
-    				
+    				pS.setString(1, vIDList.get(i));
+    				pS.setString(2, severityList.get(i));
+    				pS.setString(3, titleList.get(i));
+    				pS.setString(4, checkTextList.get(i));
+    				pS.setString(5, fixTextList.get(i));
+    				pS.setString(6, currStig);
+    				pS.execute();
     			}
+    			db.createStatement().execute("UPDATE dbo.Main_Table "
+    					+ "");
     			
     			
     		} catch (Exception e) {
-    			
+    			//System.out.println(e);
+    			e.printStackTrace();
     		}
     		
     	}
