@@ -54,8 +54,9 @@ public class Triggers {
 					+ "REFERENCING NEW AS NEWROW "
 					+ "FOR EACH ROW "
 					+ "DELETE FROM dbo.Completed "
-					+ "WHERE DATE_FOUND NOT IN (SELECT MAX(DATE_FOUND) FROM DBO.Completed " 
+					+ "WHERE DATE_FOUND NOT IN (SELECT MIN(DATE_FOUND) FROM DBO.Completed " 
 					+ "GROUP BY HOST_NAME, V_ID, STIG)");
+					
 		} catch (Exception e) {
 			
 		}

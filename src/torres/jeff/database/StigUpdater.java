@@ -75,7 +75,7 @@ public class StigUpdater {
     }
     
     public void runStigUpdate(Connection db) throws ParserConfigurationException, SQLException {
-    	PreparedStatement pS = db.prepareStatement("INSERT INTO dbo.Stig_Table VALUES (?,?,?,?,?,?)");
+    	PreparedStatement pS = db.prepareStatement("INSERT INTO dbo.Stig_Table (V_ID,Severity,Title,Check_Text,Fix_Text,Stig) VALUES (?,?,?,?,?,?)");
     	File stigDrop = new File("WorkSpace/STIG_Drop");
     	File[] listXML = stigDrop.listFiles();
     	for (File xmlDoc : listXML) {
@@ -136,11 +136,11 @@ public class StigUpdater {
     				pS.execute();
     			}
     			db.createStatement().execute("UPDATE dbo.Main_Table "
-    					+ "");
+    					+ "SET ");
     			
     			
     		} catch (Exception e) {
-    			//System.out.println(e);
+    			
     			e.printStackTrace();
     		}
     		

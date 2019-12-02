@@ -88,20 +88,30 @@ public class XccdfReader {
 			try {
 				db.createStatement().execute("INSERT INTO dbo.METRICS (Host_Name) SELECT DISTINCT Host_Name FROM dbo.STAGE_XC");
 	        	db.createStatement().execute("DELETE FROM dbo.Stage_xc");
+	        	db.createStatement().execute("DELETE FROM dbo.Completed " + 
+	        			"WHERE CUST_ID IN (" + 
+	        			"SELECT S.CUST_ID " + 
+	        			"FROM DBO.Completed AS S " + 
+	        			"JOIN DBO.Ongoing ON dbo.Ongoing.host_name = S.host_name AND dbo.Ongoing.V_ID = S.V_ID AND dbo.Ongoing.STIG = S.STIG " + 
+	        			"WHERE DBO.Ongoing.Date_Found > S.Date_Found)");
 	        	db.createStatement().execute("DELETE FROM dbo.Ongoing " + 
-	        			"WHERE (Host_Name, V_ID, STIG) IN (" + 
-	        			"SELECT S.Host_Name, S.V_ID, S.STIG " + 
+	        			"WHERE CUST_ID IN (" + 
+	        			"SELECT S.CUST_ID " + 
 	        			"FROM DBO.ONGOING AS S " + 
 	        			"JOIN DBO.Completed ON dbo.completed.host_name = S.host_name AND dbo.completed.V_ID = S.V_ID AND dbo.completed.STIG = S.STIG " + 
 	        			"WHERE DBO.Completed.Date_Found > S.Date_Found)");
-	        	db.createStatement().execute("INSERT INTO dbo.Main_Table (Group_Org, HostName, V_ID, Severity, Status, Title, Check_Text, Fix_Text, STIG, Date_Found) "
-	        			+ "SELECT dbo.Assets.OU, dbo.Ongoing.Host_Name, dbo.Ongoing.V_ID, dbo.Stig_Table.Severity, dbo.Ongoing.Status, dbo.Stig_Table.Title, dbo.Stig_Table.Check_Text, dbo.Stig_Table.Fix_Text, dbo.Stig_Table.STIG, dbo.Ongoing.Date_Found "
+	        	db.createStatement().execute("INSERT INTO dbo.Main_Table (Group_Org, Host_Name, V_ID, Severity, Status, Title, Check_Text, Fix_Text, STIG, Date_Found) "
+	        			+ "SELECT DISTINCT dbo.Assets.OU, dbo.Ongoing.Host_Name, dbo.Ongoing.V_ID, dbo.Stig_Table.Severity, dbo.Ongoing.Status, dbo.Stig_Table.Title, dbo.Stig_Table.Check_Text, dbo.Stig_Table.Fix_Text, dbo.Stig_Table.STIG, dbo.Ongoing.Date_Found "
 	        			+ "FROM dbo.Ongoing "
 	        			+ "LEFT JOIN dbo.Assets ON dbo.Assets.Host_Name = dbo.Ongoing.Host_Name "
 	        			+ "JOIN dbo.Stig_Table ON dbo.Ongoing.V_ID = dbo.Stig_Table.V_ID "
 	        			+ "WHERE dbo.Ongoing.Stig Like dbo.Stig_Table.Stig");
+	        	db.createStatement().execute("DELETE FROM dbo.Main_Table " + 
+	        			"WHERE CUST_ID NOT IN (" + 
+	        			"SELECT S.CUST_ID " + 
+	        			"FROM DBO.Main_Table AS S " + 
+	        			"JOIN dbo.Stig_Table ON dbo.S.V_ID = dbo.Stig_Table.V_ID AND dbo.S.Stig = dbo.Stig_Table.Stig");
 			}
-			
 	        catch (Exception e) {
 	        	errorLog.log(Level.SEVERE, "XccdfReader Database Appending Error", e);
 	        }

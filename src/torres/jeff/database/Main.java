@@ -14,9 +14,8 @@ public class Main {
 		Connection db = new Connections().ConnectDB();
 		CreateTables.createTables();
 		Triggers.setTriggers(db);
-		//XccdfReader.go(db);
-		
-		StigUpdater u = new StigUpdater();
-		u.runStigUpdate(db);
+		XccdfReader.go(db);
+		//StigUpdater u = new StigUpdater();
+		//u.runStigUpdate(db);
 	}
 }
