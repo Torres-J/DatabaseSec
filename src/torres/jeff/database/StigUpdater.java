@@ -135,8 +135,7 @@ public class StigUpdater {
     				pS.setString(6, currStig);
     				pS.execute();
     			}
-    			db.createStatement().execute("UPDATE dbo.Main_Table "
-    					+ "SET ");
+    			
     			
     			
     		} catch (Exception e) {

@@ -11,7 +11,7 @@ public class ErrorLogging {
 		String mainDirectory = System.getProperty("user.dir");
 		String logDir = mainDirectory + "/logs/";
 		Logger loggerObj = Logger.getLogger( className );
-		FileHandler fh= new FileHandler(logDir + fileName, true);
+		FileHandler fh= new FileHandler(logDir + fileName);
 		fh.setLevel(level);
 		fh.setFormatter(new SimpleFormatter());
 		loggerObj.addHandler(fh);

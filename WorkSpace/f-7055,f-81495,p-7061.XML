@@ -304,7 +304,7 @@ Set SchUseStrongCrypto to a REG_DWORD value of “1”.</cdf:fixtext>
             <cdf:target-id-ref name="SCC_EXAMPLE" href="" system="http://scap.nist.gov/schema/asset-identification/1.1"></cdf:target-id-ref>
             <cdf:platform idref="cpe:/a:microsoft:.net_framework:4.0"></cdf:platform>
             <cdf:rule-result weight="10.0" idref="xccdf_mil.disa.stig_rule_SV-7438r2_rule" version="APPNET0031" severity="medium" time="2019-09-03T04:36:34">
-                  <cdf:result>pass</cdf:result>
+                  <cdf:result>fail</cdf:result>
                   <cdf:fix id="F-12596r7_fix"></cdf:fix>
                   <cdf:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                         <cdf:check-content-ref href="#scap_mil.disa.stig_comp_U_MS_DotNet_Framework_4_V1R6_STIG_SCAP_1-2_Benchmark-oval.xml" name="oval:mil.disa.fso.dotnet:def:2"></cdf:check-content-ref>
