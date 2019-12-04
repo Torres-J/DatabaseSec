@@ -30,20 +30,10 @@ public class CreateTables  {
 		} catch (Exception e) {
 			
 		}
-		try {
-		db.createStatement().execute("CREATE TABLE dbo.Ongoing ("
-				+ "CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
-				+ "V_ID varchar(15),"
-				+ "Host_Name varchar(150),"
-				+ "Status varchar(20),"
-				+ "STIG varchar(300),"
-				+ "Date_Found TIMESTAMP NOT NULL)");
-		} catch (Exception e) {
-			
-		}
+		
 		try {
 		db.createStatement().execute("CREATE TABLE dbo.Completed ("
-				+ "CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+				+ "CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 2),"
 				+ "V_ID varchar(15),"
 				+ "Host_Name varchar(150),"
 				+ "Status varchar(20),"
@@ -54,19 +44,31 @@ public class CreateTables  {
 		}
 		try {
 		db.createStatement().execute("CREATE TABLE dbo.Stig_Table ("
-				+ "CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+				+ "CUST_ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
 				+ "V_ID varchar(15),"
 				+ "Severity varchar(20),"
 				+ "Title varchar(500),"
 				+ "Check_Text varchar(5000),"
 				+ "Fix_Text varchar(5000),"
-				+ "STIG varchar(300))");
+				+ "STIG varchar(300),"
+				+ "PRIMARY KEY (V_ID, STIG))");
 		} catch (Exception e) {
 			
 		}
 		try {
+			db.createStatement().execute("CREATE TABLE dbo.Ongoing ("
+					+ "CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 2, INCREMENT BY 2),"
+					+ "V_ID varchar(15),"
+					+ "Host_Name varchar(150),"
+					+ "Status varchar(20),"
+					+ "STIG varchar(300),"
+					+ "Date_Found TIMESTAMP NOT NULL)");
+			} catch (Exception e) {
+				
+			}
+		try {
 			db.createStatement().execute("CREATE TABLE dbo.Main_Table ("
-					+ "CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+					+ "CUST_ID INT NOT NULL PRIMARY KEY,"
 					+ "Group_Org varchar(255),"
 					+ "Host_Name varchar(150),"
 					+ "V_ID varchar(15),"

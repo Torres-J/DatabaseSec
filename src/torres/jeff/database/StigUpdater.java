@@ -137,6 +137,38 @@ public class StigUpdater {
     			}
     			
     			
+    			db.createStatement().execute("delete from dbo.Ongoing "
+    					+ "WHERE CUST_ID NOT IN ("
+    					+ "SELECT dbo.Ongoing.CUST_ID "
+    					+ "FROM dbo.Ongoing "
+    					+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Ongoing.V_ID AND dbo.Stig_Table.STIG = dbo.Ongoing.STIG "
+    					+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
+    			
+    			db.createStatement().execute("delete from dbo.Completed "
+    					+ "WHERE CUST_ID NOT IN ("
+    					+ "SELECT dbo.Completed.CUST_ID "
+    					+ "FROM dbo.Completed "
+    					+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Completed.V_ID AND dbo.Stig_Table.STIG = dbo.Completed.STIG "
+    					+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
+    			
+    			db.createStatement().execute("delete from dbo.Main_Table "
+    					+ "WHERE CUST_ID NOT IN ("
+    					+ "SELECT dbo.Main_Table.CUST_ID "
+    					+ "FROM dbo.Main_Table "
+    					+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG "
+    					+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
+    			
+    			db.createStatement().execute("UPDATE dbo.Main_Table "
+    					+ "SET dbo.Main_Table.V_ID = dbo.Stig_Table.V_ID,"
+    					+ "dbo.Main_Table.Severity = dbo.Stig_Table.Severity,"
+    					+ "dbo.Main_Table.Title = dbo.Stig_Table.Title,"
+    					+ "dbo.Main_Table.Check_Text = dbo.Stig_Table.Check_Text,"
+    					+ "dbo.Main_Table.Fix_Text = dbo.Stig_Table.Fix_Text,"
+    					+ "dbo.Main_Table.STIG = dbo.Stig_Table.STIG "
+    					+ "WHERE CUST_ID IN ("
+    					+ "SELECT dbo.Stig_Table.CUST_ID FROM dbo.Stig_Table "
+    					+ "JOIN dbo.Main_Table ON dbo.stig_table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG)");
+    			
     			
     		} catch (Exception e) {
     			

@@ -19,7 +19,8 @@ public class Triggers {
 					+ "FOR EACH ROW "
 					+ "INSERT INTO dbo.Ongoing (V_ID, Host_Name, Status, STIG, Date_Found) "
 					+ "Select DISTINCT NEWROW.V_ID, NEWROW.Host_Name, NEWROW.Status, NEWROW.STIG, NEWROW.Date_Found from dbo.STAGE_XC "
-					+ "WHERE NEWROW.Status = 'fail'");
+					+ "JOIN dbo.Stig_Table ON dbo.STAGE_XC.V_ID = NEWROW.V_ID "
+					+ "WHERE NEWROW.Status = 'fail' AND NEWROW.STIG Like dbo.Stig_Table.STIG");
 		} catch (Exception e) {
 			
 		}
@@ -43,12 +44,13 @@ public class Triggers {
 					+ "FOR EACH ROW "
 					+ "INSERT INTO dbo.Completed (V_ID, Host_Name, Status, STIG, Date_Found) "
 					+ "Select DISTINCT NEWROW.V_ID, NEWROW.Host_Name, NEWROW.Status, NEWROW.STIG, NEWROW.Date_Found from dbo.STAGE_XC "
-					+ "WHERE NEWROW.Status = 'pass'");
+					+ "JOIN dbo.Stig_Table ON dbo.STAGE_XC.V_ID = NEWROW.V_ID "
+					+ "WHERE NEWROW.Status = 'pass' AND NEWROW.STIG Like dbo.Stig_Table.STIG");
 		} catch (Exception e) {
 			
 		}
 		try {
-			// After insert on completed table, the youngest files are purged
+			// After insert on completed table, the LATEST files are purged
 			db.createStatement().execute("CREATE TRIGGER completed_delete_earliest "
 					+ "AFTER INSERT ON dbo.Completed "
 					+ "REFERENCING NEW AS NEWROW "
