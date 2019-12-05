@@ -127,11 +127,7 @@ public class XccdfReader {
 		        			+ "JOIN dbo.Stig_Table ON dbo.Completed.V_ID = dbo.Stig_Table.V_ID "
 		        			+ "LEFT JOIN dbo.Main_Table ON dbo.Main_Table.CUST_ID = dbo.Completed.CUST_ID "
 		        			+ "WHERE dbo.Completed.Stig Like dbo.Stig_Table.Stig AND dbo.Main_Table.CUST_ID IS NULL");
-		        	
-		        	/*db.createStatement().execute("DELETE FROM dbo.Main_Table " + 
-		        			"WHERE DATE_FOUND NOT IN (SELECT MIN(DATE_FOUND) FROM DBO.MAIN_TABLE " +
-		        			"GROUP BY HOST_NAME, V_ID, Status, STIG)");
-		        			*/
+		        			
 				}
 		        catch (Exception e) {
 		        	errorLog.log(Level.SEVERE, "XccdfReader Database Appending Error", e);

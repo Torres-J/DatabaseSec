@@ -1,0 +1,45 @@
+4,,"EXAMPLE","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+
+For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
+
+For 64 bit systems:
+HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319\
+
+If the “SchUseStrongCrypto” value name does not exist, or is not a REG_DWORD type set to “1”, this is a finding.
+
+","Use regedit to access the following registry key.
+
+For 32-bit systems:
+HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
+
+For 64-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319\
+
+Modify or create the following Windows registry value: SchUseStrongCrypto
+
+Set SchUseStrongCrypto to a REG_DWORD value of “1”.
+","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-04 13:56:23.46"
+1,,"EXAMPLE","V-7061","medium","pass","The Trust Providers Software Publishing State must be set to 0x23C00.","If the system or application being reviewed is SIPR based, this finding is NA.
+
+This check must be performed for each user on the system. 
+
+Use regedit to locate ""HKEY_USER\[UNIQUE USER SID VALUE]\Software\Microsoft\Windows\CurrentVersion\WinTrust\Trust Providers\Software Publishing\State"".  
+
+If the State value for any user is not set to the hexadecimal value of 0x23C00, this is a finding.
+","This fix must be performed for each user on the system.
+
+Using regedit, change the hexadecimal value of the ""HKEY_USER\[UNIQUE USER SID VALUE]\Software\Microsoft\Windows\CurrentVersion\WinTrust\Trust Providers\Software Publishing\State"" registry key to 0x23C00.
+","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-04 13:56:23.435"
+1204,,"EXAMPLE","V-7055","medium","fail","Fuck you signatures assigned to strongly named assemblies must be verified.","Use regedit to review the Windows registry key 
+HKLM\Software\Microsoft\StrongName\Verification. 
+There should be no assemblies or hash values listed under this registry key. If the StrongName\Verification key does not exist, this is not a finding.
+
+If there are assemblies or hash values listed in this key, each value represents a distinct application assembly that does not have the application strong name verified.  
+
+If any assemblies are listed as omitting strong name verification in a production environment, this is a finding.
+
+If any assemblies are listed as omitting strong name verification in a development or test environment and the IAO has not provided documented approvals, this is a finding.","Use regedit to remove the values stored in Windows registry key HKLM\Software\Microsoft\StrongName\Verification. There should be no assemblies or hash values listed under this registry key.
+
+All assemblies must require strong name verification in a production environment.
+
+Strong name assemblies that do not require verification in a development or test environment must have documented approvals from the IAO.
+","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-04 15:17:08.658"

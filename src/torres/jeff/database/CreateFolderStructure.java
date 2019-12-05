@@ -17,7 +17,7 @@ public class CreateFolderStructure {
 		String mainDirectory = System.getProperty("user.dir");
 		String workSpace = mainDirectory + "/WorkSpace";
 		
-		String cklDrop = mainDirectory + "/cklDrop_Drop";
+		String cklDrop = workSpace + "/ckl_Drop_Drop";
 		File cklDirectory = new File(cklDrop);
 		if (!cklDirectory.exists()) {
 			cklDirectory.mkdir();
@@ -43,6 +43,11 @@ public class CreateFolderStructure {
 		File logDirFiles = new File(logDir);
 		if (!logDirFiles.exists()) {
 			logDirFiles.mkdir();
+		}
+		String biDir = workSpace + "/BI_Files";
+		File biDirFile = new File(biDir);
+		if (!biDirFile.exists()) {
+			biDirFile.mkdir();
 		}
 
 }

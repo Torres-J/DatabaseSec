@@ -14,9 +14,11 @@ public class Main {
 		Connection db = new Connections().ConnectDB();
 		CreateTables.createTables();
 		Triggers.setTriggers(db);
-		//XccdfReader.go(db);
 		StigUpdater u = new StigUpdater();
-		u.runStigUpdate(db);
-		//db.createStatement().execute("DELETE FROM dbo.stig_table where stig like '%MICRO%'");
+		u.unzip(db);
+		//XccdfReader.go(db);
+		//BiExporter bI = new BiExporter();
+		//bI.exportBiFiles(db);
+
 	}
 }
