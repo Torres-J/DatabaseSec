@@ -20,19 +20,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/* public static void main(String[] args) throws IOException {
-		StigUpdater zip = new StigUpdater();
-		String userDir = System.getProperty("user.dir");
-		File zipFile = new File(userDir);
-		for (File f : zipFile.listFiles()) {
-			if (f.toString().contains(".zip")) {
-				String fi = f.toString();
-				zip.unzip(fi, userDir);
-			}
-		}
-
-	}*/
-
 public class StigUpdater {
 
     public void unzip(Connection db) throws ParserConfigurationException, SQLException {
@@ -77,11 +64,15 @@ public class StigUpdater {
 	      
 	    		File folderList = new File(stigDrop);
 	    		for (File folder : folderList.listFiles()) {
-	    			for (File file : folder.listFiles()) {
-	    				runStigUpdate(db, file);
-	    				file.delete();
+    				try {
+		    			for (File file : folder.listFiles()) {
+		    				System.out.println(file.toString());
+		    				runStigUpdate(db, file);
+		    				file.delete();
+		    			}
+		    			folder.delete();
+    				} catch (Exception e) {
 	    			}
-	    			folder.delete();
 	    		}
 	        } catch (IOException e) {
 	            //e.printStackTrace();
@@ -171,16 +162,11 @@ public class StigUpdater {
 					+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG "
 					+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
 			
-			db.createStatement().execute("UPDATE dbo.Main_Table "
-					+ "SET dbo.Main_Table.V_ID = dbo.Stig_Table.V_ID,"
-					+ "dbo.Main_Table.Severity = dbo.Stig_Table.Severity,"
-					+ "dbo.Main_Table.Title = dbo.Stig_Table.Title,"
-					+ "dbo.Main_Table.Check_Text = dbo.Stig_Table.Check_Text,"
-					+ "dbo.Main_Table.Fix_Text = dbo.Stig_Table.Fix_Text,"
-					+ "dbo.Main_Table.STIG = dbo.Stig_Table.STIG "
-					+ "WHERE CUST_ID IN ("
-					+ "SELECT dbo.Stig_Table.CUST_ID FROM dbo.Stig_Table "
-					+ "JOIN dbo.Main_Table ON dbo.stig_table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG)");
+			db.createStatement().execute("UPDATE dbo.Main_Table " + 
+					"SET dbo.Main_Table.Title = (SELECT DISTINCT dbo.Stig_Table.Title FROM dbo.Stig_Table WHERE dbo.stig_table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG)," + 
+					"dbo.Main_Table.Severity = (SELECT DISTINCT dbo.Stig_Table.Severity FROM dbo.Stig_Table WHERE dbo.stig_table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG)," + 
+					"dbo.Main_Table.Check_Text = (SELECT DISTINCT dbo.Stig_Table.Check_Text FROM dbo.Stig_Table WHERE dbo.stig_table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG)," + 
+					"dbo.Main_Table.Fix_Text = (SELECT DISTINCT dbo.Stig_Table.Fix_Text FROM dbo.Stig_Table WHERE dbo.stig_table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG)");
 			
 			
 		} catch (Exception e) {

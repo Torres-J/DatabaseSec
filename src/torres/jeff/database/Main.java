@@ -16,9 +16,10 @@ public class Main {
 		Triggers.setTriggers(db);
 		StigUpdater u = new StigUpdater();
 		u.unzip(db);
+		Asset_Importer.importAssets(db);
 		//XccdfReader.go(db);
-		//BiExporter bI = new BiExporter();
-		//bI.exportBiFiles(db);
+		BiExporter bI = new BiExporter();
+		bI.exportBiFiles(db);
 
 	}
 }

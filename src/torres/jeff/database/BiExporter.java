@@ -16,8 +16,10 @@ public class BiExporter {
 		}
 		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select * from dbo.Main_Table'," + 
 				"'" + biDir + "/main_table.csv" + "', null, null, null)");
-		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select * from dbo.Metrics'," + 
+		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select DISTINCT * from dbo.Metrics'," + 
 				"'" + biDir + "/Metrics.csv" + "', null, null, null)");
+		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select DISTINCT * from dbo.Assets'," + 
+				"'" + biDir + "/Assets.csv" + "', null, null, null)");
 		
 	}
 

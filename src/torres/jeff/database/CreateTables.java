@@ -48,8 +48,8 @@ public class CreateTables  {
 				+ "V_ID varchar(15),"
 				+ "Severity varchar(20),"
 				+ "Title varchar(500),"
-				+ "Check_Text varchar(5000),"
-				+ "Fix_Text varchar(5000),"
+				+ "Check_Text varchar(30000),"
+				+ "Fix_Text varchar(30000),"
 				+ "STIG varchar(300),"
 				+ "PRIMARY KEY (V_ID, STIG))");
 		} catch (Exception e) {
@@ -75,8 +75,8 @@ public class CreateTables  {
 					+ "Severity varchar(20),"
 					+ "Status varchar(20),"
 					+ "Title varchar(500),"
-					+ "Check_Text varchar(5000),"
-					+ "Fix_Text varchar(5000),"
+					+ "Check_Text varchar(30000),"
+					+ "Fix_Text varchar(30000),"
 					+ "STIG varchar(300),"
 					+ "Date_Found TIMESTAMP)");
 			} catch (Exception e) {

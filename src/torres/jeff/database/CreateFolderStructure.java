@@ -49,6 +49,11 @@ public class CreateFolderStructure {
 		if (!biDirFile.exists()) {
 			biDirFile.mkdir();
 		}
+		String AssetDir = workSpace + "/Asset_Drop";
+		File AssetDirDrop = new File(AssetDir);
+		if (!AssetDirDrop.exists()) {
+			AssetDirDrop.mkdir();
+		}
 
 }
 }
