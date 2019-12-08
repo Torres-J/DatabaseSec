@@ -5,11 +5,17 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 
 
 public class Main {
+	
+	final private static int stigUpdateTimeMinutes = 5;
+	final private static int importAssetsMinutes = 5;
+	final private static int importNewVulnerabilitySeconds = 5;
+	final private static int exportBIFilesMinutes = 30;
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, InterruptedException, ParserConfigurationException, IOException {
 		
@@ -22,10 +28,9 @@ public class Main {
 		u.unzip(db);
 		BiExporter bI = new BiExporter();
 		bI.exportBiFiles(db);
-		//XccdfReader.go(db);
 		ScheduledExecutorService executorService = Executors.newScheduledThreadPool(4);
-		/*
-		executorService.execute(new Runnable() {
+/*
+		executorService.scheduleAtFixedRate(new Runnable() {
 		    public void run() {
 		    	try {
 					u.unzip(db);
@@ -34,9 +39,9 @@ public class Main {
 					e.printStackTrace();
 				}
 		    }
-		});
+		}, 0, stigUpdateTimeMinutes, TimeUnit.MINUTES);
 		
-		executorService.execute(new Runnable() {
+		executorService.scheduleAtFixedRate(new Runnable() {
 		    public void run() {
 		    	try {
 		    		Asset_Importer.importAssets(db);
@@ -45,10 +50,10 @@ public class Main {
 					e.printStackTrace();
 				}
 		    }
-		});
+		}, 0, importAssetsMinutes, TimeUnit.MINUTES);
+*/	
 		
-		
-		executorService.execute(new Runnable() {
+		executorService.scheduleAtFixedRate(new Runnable() {
 		    public void run() {
 		    	try {
 		    		XccdfReader.go(db);
@@ -57,10 +62,9 @@ public class Main {
 					e.printStackTrace();
 				}
 		    }
-		});
-		
-		
-		executorService.execute(new Runnable() {
+		}, 0, importNewVulnerabilitySeconds, TimeUnit.SECONDS);
+/*	
+		executorService.scheduleAtFixedRate(new Runnable() {
 		    public void run() {
 		    	try {
 		    		bI.exportBiFiles(db);
@@ -69,14 +73,8 @@ public class Main {
 					e.printStackTrace();
 				}
 		    }
-		});
-		*/
-		
-		//u.unzip(db);
-		//Asset_Importer.importAssets(db);
-		//XccdfReader.go(db);
-		
-		//bI.exportBiFiles(db);
+		}, 0, exportBIFilesMinutes, TimeUnit.MINUTES);
+*/		
 
 	}
 }

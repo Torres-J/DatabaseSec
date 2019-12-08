@@ -43,6 +43,28 @@ public class CreateTables  {
 			
 		}
 		try {
+			db.createStatement().execute("CREATE TABLE dbo.Completed_Temp ("
+					+ "CUST_ID INT,"
+					+ "V_ID varchar(15),"
+					+ "Host_Name varchar(150),"
+					+ "Status varchar(20),"
+					+ "STIG varchar(300),"
+					+ "Date_Found TIMESTAMP NOT NULL)");
+			} catch (Exception e) {
+				
+			}
+		try {
+			db.createStatement().execute("CREATE TABLE dbo.Ongoing_Temp ("
+					+ "CUST_ID INT,"
+					+ "V_ID varchar(15),"
+					+ "Host_Name varchar(150),"
+					+ "Status varchar(20),"
+					+ "STIG varchar(300),"
+					+ "Date_Found TIMESTAMP NOT NULL)");
+			} catch (Exception e) {
+				
+			}
+		try {
 		db.createStatement().execute("CREATE TABLE dbo.Stig_Table ("
 				+ "CUST_ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
 				+ "V_ID varchar(15),"
