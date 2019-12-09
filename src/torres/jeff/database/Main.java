@@ -14,7 +14,7 @@ public class Main {
 	
 	final private static int stigUpdateTimeMinutes = 5;
 	final private static int importAssetsMinutes = 5;
-	final private static int importNewVulnerabilitySeconds = 5;
+	final private static int importNewVulnerabilitySeconds = 30;
 	final private static int exportBIFilesMinutes = 30;
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, InterruptedException, ParserConfigurationException, IOException {
@@ -28,7 +28,7 @@ public class Main {
 		u.unzip(db);
 		BiExporter bI = new BiExporter();
 		bI.exportBiFiles(db);
-		ScheduledExecutorService executorService = Executors.newScheduledThreadPool(4);
+		ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 /*
 		executorService.scheduleAtFixedRate(new Runnable() {
 		    public void run() {
@@ -56,13 +56,16 @@ public class Main {
 		executorService.scheduleAtFixedRate(new Runnable() {
 		    public void run() {
 		    	try {
+		    		Asset_Importer.importAssets(db);
+		    		u.unzip(db);
 		    		XccdfReader.go(db);
+		    		bI.exportBiFiles(db);
 				} catch (SQLException | IOException | InterruptedException | ParserConfigurationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 		    }
-		}, 0, importNewVulnerabilitySeconds, TimeUnit.SECONDS);
+		}, 0, importNewVulnerabilitySeconds, TimeUnit.MINUTES);
 /*	
 		executorService.scheduleAtFixedRate(new Runnable() {
 		    public void run() {
