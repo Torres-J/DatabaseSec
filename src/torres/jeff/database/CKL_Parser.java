@@ -75,7 +75,6 @@ public class CKL_Parser {
 			            	statusValue = "pass";
 			            }
 			            results.add(statusValue);  
-			            System.out.println(statusValue);
 			        }
 			        
 
