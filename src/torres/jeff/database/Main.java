@@ -12,10 +12,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class Main {
 	
-	final private static int stigUpdateTimeMinutes = 5;
-	final private static int importAssetsMinutes = 5;
 	final private static int importNewVulnerabilitySeconds = 30;
-	final private static int exportBIFilesMinutes = 30;
 
 	public static void main(String[] args) throws SQLException, ClassNotFoundException, InterruptedException, ParserConfigurationException, IOException {
 		
@@ -29,30 +26,7 @@ public class Main {
 		BiExporter bI = new BiExporter();
 		bI.exportBiFiles(db);
 		ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-/*
-		executorService.scheduleAtFixedRate(new Runnable() {
-		    public void run() {
-		    	try {
-					u.unzip(db);
-				} catch (ParserConfigurationException | SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		    }
-		}, 0, stigUpdateTimeMinutes, TimeUnit.MINUTES);
-		
-		executorService.scheduleAtFixedRate(new Runnable() {
-		    public void run() {
-		    	try {
-		    		Asset_Importer.importAssets(db);
-				} catch (SQLException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		    }
-		}, 0, importAssetsMinutes, TimeUnit.MINUTES);
-*/	
-		
+
 		executorService.scheduleAtFixedRate(new Runnable() {
 		    public void run() {
 		    	try {
@@ -66,18 +40,6 @@ public class Main {
 				}
 		    }
 		}, 0, importNewVulnerabilitySeconds, TimeUnit.MINUTES);
-/*	
-		executorService.scheduleAtFixedRate(new Runnable() {
-		    public void run() {
-		    	try {
-		    		bI.exportBiFiles(db);
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-		    }
-		}, 0, exportBIFilesMinutes, TimeUnit.MINUTES);
-*/		
 
 	}
 }

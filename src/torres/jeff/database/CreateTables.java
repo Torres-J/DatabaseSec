@@ -54,6 +54,17 @@ public class CreateTables  {
 				
 			}
 		try {
+			db.createStatement().execute("CREATE TABLE dbo.Completed_Temp1 ("
+					+ "CUST_ID INT,"
+					+ "V_ID varchar(15),"
+					+ "Host_Name varchar(150),"
+					+ "Status varchar(20),"
+					+ "STIG varchar(300),"
+					+ "Date_Found TIMESTAMP NOT NULL)");
+			} catch (Exception e) {
+				
+			}
+		try {
 			db.createStatement().execute("CREATE TABLE dbo.Ongoing_Temp ("
 					+ "CUST_ID INT,"
 					+ "V_ID varchar(15),"
