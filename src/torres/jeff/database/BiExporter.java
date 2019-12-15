@@ -1,17 +1,22 @@
 package torres.jeff.database;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.apache.commons.io.FileDeleteStrategy;
+
 public class BiExporter {
 	
-	public void exportBiFiles(Connection db) throws SQLException {
+	public void exportBiFiles(Connection db) throws SQLException, IOException, InterruptedException {
 		String mainDirectory = System.getProperty("user.dir");
 		String workSpace = mainDirectory + "/WorkSpace";
 		String biDir = workSpace + "/BI_Files";
 		File[] fileList = new File(biDir).listFiles();
 		for (File f : fileList) {
+			Process p = Runtime.getRuntime().exec("cmd.exe /c taskkill /f /FI \"windowtitle eq " + f.getName() + "*\"");
+			Thread.sleep(2000);
 			f.delete();
 		}
 		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select * from dbo.Main_Table'," + 

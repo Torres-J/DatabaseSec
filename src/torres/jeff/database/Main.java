@@ -24,7 +24,6 @@ public class Main {
 		StigUpdater u = new StigUpdater();
 		u.unzip(db);
 		BiExporter bI = new BiExporter();
-		bI.exportBiFiles(db);
 		ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
 		executorService.scheduleAtFixedRate(new Runnable() {
@@ -32,7 +31,9 @@ public class Main {
 		    	try {
 		    		Asset_Importer.importAssets(db);
 		    		u.unzip(db);
+		    		CKL_Parser.CKLParserStart(db);
 		    		XccdfReader.go(db);
+		    		MainWorkflow.startWorkflow(db);
 		    		bI.exportBiFiles(db);
 				} catch (SQLException | IOException | InterruptedException | ParserConfigurationException e) {
 					// TODO Auto-generated catch block

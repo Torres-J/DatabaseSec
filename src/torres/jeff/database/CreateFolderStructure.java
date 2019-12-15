@@ -9,7 +9,7 @@ public class CreateFolderStructure {
 	//private static final Logger LOGGER = Logger.getLogger( CreateFolderStructure.class.getName() );
 
 	public static File workspacePathXccdfDrop;
-	
+	public static File workspacePathCKLDrop;
 	public static void createFolders() throws SecurityException, IOException {
 		
 		
@@ -22,6 +22,7 @@ public class CreateFolderStructure {
 		if (!cklDirectory.exists()) {
 			cklDirectory.mkdir();
 		}
+		workspacePathCKLDrop = cklDirectory;
 		
 		File xccdfDrop = new File(workSpace + "/xccdfDrop");
 		if (!xccdfDrop.exists()) {
