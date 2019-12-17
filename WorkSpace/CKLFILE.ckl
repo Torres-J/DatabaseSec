@@ -1502,7 +1502,7 @@ If the .NET application configuration file utilizes the legacy policy element an
 					<VULN_ATTRIBUTE>CCI_REF</VULN_ATTRIBUTE>
 					<ATTRIBUTE_DATA></ATTRIBUTE_DATA>
 				</STIG_DATA>
-				<STATUS>Not_Reviewed</STATUS>
+				<STATUS>Open</STATUS>
 				<FINDING_DETAILS></FINDING_DETAILS>
 				<COMMENTS></COMMENTS>
 				<SEVERITY_OVERRIDE></SEVERITY_OVERRIDE>
@@ -19989,7 +19989,7 @@ Inactive accounts that have been reviewed and deemed to be required must be docu
 					<VULN_ATTRIBUTE>CCI_REF</VULN_ATTRIBUTE>
 					<ATTRIBUTE_DATA>CCI-000795</ATTRIBUTE_DATA>
 				</STIG_DATA>
-				<STATUS>Not_Reviewed</STATUS>
+				<STATUS>Open</STATUS>
 				<FINDING_DETAILS></FINDING_DETAILS>
 				<COMMENTS></COMMENTS>
 				<SEVERITY_OVERRIDE></SEVERITY_OVERRIDE>
@@ -23697,7 +23697,7 @@ If the value for "Store password using reversible encryption" is not set to "Dis
 					<VULN_ATTRIBUTE>CCI_REF</VULN_ATTRIBUTE>
 					<ATTRIBUTE_DATA>CCI-000196</ATTRIBUTE_DATA>
 				</STIG_DATA>
-				<STATUS>Not_Reviewed</STATUS>
+				<STATUS>Open</STATUS>
 				<FINDING_DETAILS></FINDING_DETAILS>
 				<COMMENTS></COMMENTS>
 				<SEVERITY_OVERRIDE></SEVERITY_OVERRIDE>
