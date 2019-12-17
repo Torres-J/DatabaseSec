@@ -12,7 +12,6 @@ public class CreateFolderStructure {
 	public static File workspacePathCKLDrop;
 	public static void createFolders() throws SecurityException, IOException {
 		
-		
 		// Directory of where the program executes is created under a folder called workspace. Each files purpose is further divided into their own folder
 		String mainDirectory = System.getProperty("user.dir");
 		String workSpace = mainDirectory + "/WorkSpace";
@@ -44,7 +43,7 @@ public class CreateFolderStructure {
 		if (!stigDirectory.exists()) {
 			stigDirectory.mkdir();
 		}
-		// log directory for testing. I'm not sure whether or not logs are neccessary
+		// log directory for testing. I'm not sure whether or not logs are necessary
 		String logDir = mainDirectory + "/logs";
 		File logDirFiles = new File(logDir);
 		if (!logDirFiles.exists()) {

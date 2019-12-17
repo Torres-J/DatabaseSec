@@ -106,7 +106,6 @@ public class StigUpdater {
 				String severity = ruleNode.getAttributes().getNamedItem("severity").getTextContent();
 				severityList.add(severity);
 			}
-			//NodeList title = doc.getElementsByTagName("Rule");
 			for (int ii=0; ii < rule.getLength(); ii++) {
 				Node ruleNode = rule.item(ii);
 				Element elm = (Element) ruleNode;
