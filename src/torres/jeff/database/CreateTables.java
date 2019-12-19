@@ -30,7 +30,6 @@ public class CreateTables  {
 		} catch (Exception e) {
 			
 		}
-		
 		try {
 		db.createStatement().execute("CREATE TABLE dbo.Completed ("
 				+ "CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 2),"

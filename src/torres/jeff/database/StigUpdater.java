@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 
 public class StigUpdater {
 
+	// The unzip method unpacks zip files in the STIG_Drop folder that are downloaded from DISA. These are the STIG's. All files are deleted afterwards
     public void unzip(Connection db) throws ParserConfigurationException, SQLException {
     	String mainDirectory = System.getProperty("user.dir");
 		String workSpace = mainDirectory + "/WorkSpace";
@@ -81,6 +82,7 @@ public class StigUpdater {
         
     }
     
+    // The runStigUpdate is called for each file after unzip is called, parses and imports the STIG to the DB
     private void runStigUpdate(Connection db, File xmlDoc) throws ParserConfigurationException, SQLException {
     	PreparedStatement pS = db.prepareStatement("INSERT INTO dbo.Stig_Table (V_ID,Severity,Title,Check_Text,Fix_Text,Stig) VALUES (?,?,?,?,?,?)");
 		try {
@@ -138,8 +140,7 @@ public class StigUpdater {
 				pS.setString(6, currStig);
 				pS.execute();
 			}
-			
-			
+
 			db.createStatement().execute("delete from dbo.Ongoing "
 					+ "WHERE CUST_ID NOT IN ("
 					+ "SELECT dbo.Ongoing.CUST_ID "

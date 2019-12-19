@@ -32,29 +32,33 @@ public class MainWorkflow {
 					"SELECT DISTINCT HOST_NAME, V_ID, STATUS, STIG, DATE_FOUND FROM (SELECT Host_Name, V_ID, STATUS, STIG, MIN(DATE_FOUND) as "
 					+ "DATE_FOUND FROM DBO.COMPLETED_Temp GROUP BY HOST_NAME, V_ID, Status, STIG) as f");
 			
-			// Only transfers records where a v_id and hostname and stig overrides a finding, or if it as part of an already completed open vulnerability
-			
+			// Only transfers records where a v_id and hostname and stig overrides a finding, or if it as part of an already completed vulnerability
 			db.createStatement().execute("INSERT INTO DBO.COMPLETED (Host_Name, V_ID, STATUS, STIG, DATE_FOUND) " + 
 					"SELECT DISTINCT DBO.COMPLETED_TEMP1.HOST_NAME, DBO.COMPLETED_TEMP1.V_ID, DBO.COMPLETED_TEMP1.STATUS, DBO.COMPLETED_TEMP1.STIG, DBO.COMPLETED_TEMP1.DATE_FOUND FROM DBO.COMPLETED_TEMP1 "
 					+ "JOIN DBO.ONGOING ON DBO.ONGOING.Host_Name = DBO.COMPLETED_TEMP1.Host_Name AND DBO.ONGOING.V_ID = DBO.COMPLETED_TEMP1.V_ID "
 					+ "AND DBO.ONGOING.Stig = DBO.COMPLETED_TEMP1.Stig "
 					+ "WHERE DBO.ONGOING.Stig IS NOT NULL AND DBO.ONGOING.V_ID IS NOT NULL");
 			
+			// The below two delete all data from temp tables of completed vulnerabilities
 			db.createStatement().execute("DELETE FROM dbo.Completed_Temp");
 			db.createStatement().execute("DELETE FROM dbo.Completed_Temp1");
 			
+			// Only transfers records where a v_id and hostname and stig overrides a finding, or if it as part of an already open vulnerability
 			db.createStatement().execute("INSERT INTO DBO.ONGOING_TEMP (Host_Name, V_ID, STATUS, STIG, DATE_FOUND) " + 
 					"SELECT DISTINCT HOST_NAME, V_ID, STATUS, STIG, DATE_FOUND FROM (SELECT Host_Name, V_ID, STATUS, STIG, MIN(DATE_FOUND) as "
 					+ "DATE_FOUND FROM DBO.ONGOING GROUP BY HOST_NAME, V_ID, Status, STIG) as f");
 			
+			// Deletes all current vulnerabilities
 			db.createStatement().execute("DELETE FROM dbo.Ongoing");
 			
+			// Inserts all vulnerabilities back into the open vulnerability table
 			db.createStatement().execute("INSERT INTO DBO.Ongoing (Host_Name, V_ID, STATUS, STIG, DATE_FOUND) " + 
 					"SELECT HOST_NAME, V_ID, STATUS, STIG, DATE_FOUND FROM DBO.ONGOING_TEMP");
 			
-		
+			// Deletes from temp table
 			db.createStatement().execute("DELETE FROM DBO.ONGOING_TEMP");
 			
+			// Deletes from completed table where an open vulnerability appears again
 			db.createStatement().execute("DELETE FROM dbo.Completed " + 
         			"WHERE CUST_ID IN (" + 
         			"SELECT S.CUST_ID " + 
@@ -62,6 +66,7 @@ public class MainWorkflow {
         			"JOIN DBO.Ongoing ON dbo.Ongoing.host_name = S.host_name AND dbo.Ongoing.V_ID = S.V_ID AND dbo.Ongoing.STIG = S.STIG " + 
         			"WHERE DBO.Ongoing.Date_Found > S.Date_Found)");
 			
+			// deletes from open findings table where an open finding has been remediated
         	db.createStatement().execute("DELETE FROM dbo.Ongoing " + 
         			"WHERE CUST_ID IN (" + 
         			"SELECT S.CUST_ID " + 
@@ -69,8 +74,10 @@ public class MainWorkflow {
         			"JOIN DBO.Completed ON dbo.completed.host_name = S.host_name AND dbo.completed.V_ID = S.V_ID AND dbo.completed.STIG = S.STIG " + 
         			"WHERE DBO.Completed.Date_Found > S.Date_Found)");
         
+        	// deletes from main table
         	db.createStatement().execute("DELETE FROM DBO.MAIN_TABLE");
         	
+        	// Inserts into main table open vulnerability data matched with STIG table and asset table
         	db.createStatement().execute("INSERT INTO dbo.Main_Table (CUST_ID, Group_Org, Host_Name, V_ID, Severity, Status, Title, Check_Text, Fix_Text, STIG, Date_Found) "
         			+ "SELECT DISTINCT dbo.Ongoing.CUST_ID, dbo.Assets.OU, dbo.Ongoing.Host_Name, dbo.Ongoing.V_ID, dbo.Stig_Table.Severity, dbo.Ongoing.Status, dbo.Stig_Table.Title, dbo.Stig_Table.Check_Text, dbo.Stig_Table.Fix_Text, dbo.Stig_Table.STIG, dbo.Ongoing.Date_Found "
         			+ "FROM dbo.Ongoing "
@@ -79,6 +86,7 @@ public class MainWorkflow {
         			+ "LEFT JOIN dbo.Main_Table ON dbo.Main_Table.CUST_ID = dbo.Ongoing.CUST_ID "
         			+ "WHERE dbo.Ongoing.Stig = dbo.Stig_Table.Stig AND dbo.Main_Table.CUST_ID IS NULL");
         	
+        	// Inserts into main table completed vulnerability data matched with STIG table and asset table
         	db.createStatement().execute("INSERT INTO dbo.Main_Table (CUST_ID, Group_Org, Host_Name, V_ID, Severity, Status, Title, Check_Text, Fix_Text, STIG, Date_Found) "
         			+ "SELECT DISTINCT dbo.Completed.CUST_ID, dbo.Assets.OU, dbo.Completed.Host_Name, dbo.Completed.V_ID, dbo.Stig_Table.Severity, dbo.Completed.Status, dbo.Stig_Table.Title, dbo.Stig_Table.Check_Text, dbo.Stig_Table.Fix_Text, dbo.Stig_Table.STIG, dbo.Completed.Date_Found "
         			+ "FROM dbo.Completed "
@@ -86,8 +94,6 @@ public class MainWorkflow {
         			+ "JOIN dbo.Stig_Table ON dbo.Completed.V_ID = dbo.Stig_Table.V_ID "
         			+ "LEFT JOIN dbo.Main_Table ON dbo.Main_Table.CUST_ID = dbo.Completed.CUST_ID "
         			+ "WHERE dbo.Completed.Stig = dbo.Stig_Table.Stig AND dbo.Main_Table.CUST_ID IS NULL");
-        	
-        	System.out.println("done");
         			
 		}
         catch (Exception e) {
