@@ -30,8 +30,10 @@ public class Main {
 		StigUpdater u = new StigUpdater();
 		// Imports the STIG's from the STIG Drop folder. Data inputed without a correlated STIG will be disregarded. This was done to ensure integrity
 		u.unzip(db);
-		// Creates or initiates the first exported CSV's. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
+		// Creates the bI Object that allows exporting of data to CSV
 		BiExporter bI = new BiExporter();
+		// Creates the ACAS object
+		ACAS acas = new ACAS(db);
 		// Creates a new thread that executes a series of tasks on a periodic basis based on the importNewVulnerabilityMinutes
 		ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 		executorService.scheduleAtFixedRate(new Runnable() {
@@ -45,12 +47,15 @@ public class Main {
 		    		CKL_Parser.CKLParserStart(db);
 		    		// Parses xccdf from SCAP
 		    		XccdfReader.go(db);
-		    		// After the import of CKL's and XCCDF files, the workflow keeps the first occurance of a vulnerability by host and the date it was remediated
+		    		// After the import of CKL's and XCCDF files, the workflow keeps the first occurrence of a vulnerability by host and the date it was remediated
 		    		MainWorkflow.startWorkflow(db);
+		    		// Parses ACAS file. Data is always overwritten. The file must always contain all current vulnerabilities
+		    		acas.beginParsingACAS();
 		    		// Writes the primary tables. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
 		    		bI.exportBiFiles(db);
+		    		System.out.println("done");
 				} catch (SQLException | IOException | InterruptedException | ParserConfigurationException e) {
-					// For troubleshooting purposes. Only visable by me during program execution in Eclipse IDE
+					// For troubleshooting purposes. Only visible by me during program execution in Eclipse IDE
 					e.printStackTrace();
 				}
 		    }

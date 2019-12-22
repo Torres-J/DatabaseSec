@@ -13,7 +13,8 @@ public class MainWorkflow {
 			// Deletes from the stage table where host_name does not exist for unknown reasons
 			db.createStatement().execute("DELETE FROM DBO.STAGE_XC where host_name = '' OR HOST_NAME iS NULL");
 			
-			db.createStatement().execute("INSERT INTO dbo.METRICS (Host_Name) SELECT DISTINCT Host_Name FROM dbo.STAGE_XC");
+			db.createStatement().execute("INSERT INTO dbo.METRICS (OU, Host_Name) SELECT DISTINCT dbo.Assets.OU, dbo.STAGE_XC.Host_Name FROM dbo.STAGE_XC JOIN "
+					+ "dbo.Assets ON dbo.Assets.Host_Name LIKE dbo.STAGE_XC.Host_Name");
         	// simple insert with join on Stig_Table to save time in the future
 			db.createStatement().execute("INSERT INTO DBO.ONGOING (V_ID, Host_Name, Status, STIG, Date_Found) "
 					+ "Select DISTINCT dbo.STAGE_XC.V_ID, dbo.STAGE_XC.Host_Name, dbo.STAGE_XC.Status, DBO.Stig_Table.STIG, dbo.STAGE_XC.Date_Found from dbo.STAGE_XC " + 

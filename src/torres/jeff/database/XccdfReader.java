@@ -72,8 +72,6 @@ public class XccdfReader {
 				        	
 				        }
 				        for (int i = 0; i < results.size(); i++) {			        	   	
-				        	//String export = sysInfo.get(1).replace(",", "','") + "','" + vulnIDList.get(i) + "','" + results.get(i).toString().replace(" ", "").replace(",", ",") + "','" + sysInfo.get(0).replace(",", ",");
-				        	
 				        	pS.setString(1, sysInfo.get(1));
 				        	pS.setString(2, vulnIDList.get(i));
 				        	pS.setString(3, results.get(i));

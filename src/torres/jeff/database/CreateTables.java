@@ -114,5 +114,29 @@ public class CreateTables  {
 			} catch (Exception e) {
 				
 			}
+		try {
+			db.createStatement().execute("CREATE TABLE dbo.ACAS ("
+					+ "CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),"
+					+ "Group_Org varchar(255),"
+					+ "Plugin varchar(15),"
+					+ "Plugin_Name varchar(500),"
+					+ "Family varchar(500),"
+					+ "Severity varchar(10),"
+					+ "IP_Address varchar(20),"
+					+ "Protocol varchar(10),"
+					+ "Port varchar(10),"
+					+ "MAC_Address varchar(20),"
+					+ "DNS_Name varchar(150),"
+					+ "NetBIOS_Name varchar(150),"
+					+ "Plugin_Text varchar(30000),"
+					+ "First_Discovered varchar(50),"
+					+ "Last_Observed varchar(50),"
+					+ "Vuln_Publication_Date varchar(50),"
+					+ "Patch_Publication_Date varchar(50),"
+					+ "Plugin_Publication_Date varchar(50),"
+					+ "Upload_Date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+			} catch (Exception e) {
+				
+			}
 	}
 }

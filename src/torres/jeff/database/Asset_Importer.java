@@ -41,5 +41,7 @@ public class Asset_Importer {
 	}
 		db.createStatement().execute("UPDATE DBO.MAIN_TABLE " +
 				"SET DBO.MAIN_TABLE.Group_Org = (SELECT DISTINCT DBO.ASSETS.OU FROM DBO.ASSETS WHERE DBO.Assets.Host_name = DBO.MAIN_TABLE.Host_Name)"); 
+		db.createStatement().execute("UPDATE DBO.METRICS " +
+				"SET DBO.METRICS.OU = (SELECT DISTINCT DBO.ASSETS.OU FROM DBO.ASSETS WHERE DBO.Assets.Host_name LIKE DBO.METRICS.Host_Name)");
 	}
 }

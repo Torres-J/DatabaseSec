@@ -10,6 +10,8 @@ public class CreateFolderStructure {
 	
 	public static File workspacePathXccdfDrop;
 	public static File workspacePathCKLDrop;
+	public static File workspacePathACASDrop;
+	public static File workspacePathBIExportLocation;
 	public static void createFolders() throws SecurityException, IOException {
 		
 		// Directory of where the program executes is created under a folder called workspace. Each files purpose is further divided into their own folder
@@ -31,6 +33,14 @@ public class CreateFolderStructure {
 		}
 		// The xccdf drop location that can be called by the XccdfReader class
 		workspacePathXccdfDrop = xccdfDrop;
+		
+		// The ACAS drop location that can be called by the ACAS class
+		File ACASDrop = new File(workSpace + "/ACAS_Drop");
+		if (!ACASDrop.exists()) {
+			ACASDrop.mkdirs();
+		}
+		// The xccdf drop location that can be called by the XccdfReader class
+		workspacePathACASDrop = ACASDrop;
 		
 		String settings = mainDirectory + "/settings";
 		File settingsDirectory = new File(settings);
@@ -55,6 +65,7 @@ public class CreateFolderStructure {
 		if (!biDirFile.exists()) {
 			biDirFile.mkdir();
 		}
+		workspacePathBIExportLocation = biDirFile;
 		// The location where Asset Lists can be dropped
 		String AssetDir = workSpace + "/Asset_Drop";
 		File AssetDirDrop = new File(AssetDir);
