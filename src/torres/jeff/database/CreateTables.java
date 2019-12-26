@@ -138,5 +138,16 @@ public class CreateTables  {
 			} catch (Exception e) {
 				
 			}
+		try {
+			db.createStatement().execute("CREATE TABLE dbo.CONFIG ("
+					+ "XCCDF_Drop_Path varchar(255),"
+					+ "CKL_Drop_Path varchar(255),"
+					+ "Asset_Drop_Path varchar(255),"
+					+ "ACAS_Drop_Path varchar(255),"
+					+ "BI_Drop_Path varchar(255),"
+					+ "STIG_Drop_Path varchar(255))");
+			} catch (Exception e) {
+				
+			}
 	}
 }

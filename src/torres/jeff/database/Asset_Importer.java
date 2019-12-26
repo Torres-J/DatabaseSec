@@ -12,13 +12,9 @@ import java.sql.SQLException;
 public class Asset_Importer {
 	
 	public static void importAssets(Connection db) throws IOException, SQLException {
-		String mainDirectory = System.getProperty("user.dir");
-		String workSpace = mainDirectory + "/WorkSpace";
-		String AssetDir = workSpace + "/Asset_Drop";
-		File AssetDirDrop = new File(AssetDir);
 		BufferedReader csvReader = null;
     	PreparedStatement pS = db.prepareStatement("INSERT INTO dbo.Assets (OU, Host_Name) VALUES (?,?)");
-		for (File file : AssetDirDrop.listFiles()) {
+		for (File file : CreateFolderStructure.workspacePathAssetDrop.listFiles()) {
 			try {
 				csvReader = new BufferedReader(new FileReader(file));	
 				String row;

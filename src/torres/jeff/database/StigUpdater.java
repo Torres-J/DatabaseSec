@@ -24,10 +24,9 @@ public class StigUpdater {
 
 	// The unzip method unpacks zip files in the STIG_Drop folder that are downloaded from DISA. These are the STIG's. All files are deleted afterwards
     public void unzip(Connection db) throws ParserConfigurationException, SQLException {
-    	String mainDirectory = System.getProperty("user.dir");
-		String workSpace = mainDirectory + "/WorkSpace";
-		String stigDrop = workSpace + "/STIG_Drop";
-        File dir = new File(stigDrop);
+		File stigDrop = CreateFolderStructure.workspacePathSTIGDrop;
+		String stigDropString = stigDrop.toString();
+        File dir = new File(stigDropString);
         for (File f: dir.listFiles()) {  
 	        // create output directory if it doesn't exist
 	        if(!dir.exists()) dir.mkdirs();
@@ -63,7 +62,7 @@ public class StigUpdater {
 	            f.delete();
 	            
 	      
-	    		File folderList = new File(stigDrop);
+	    		File folderList = new File(stigDropString);
 	    		for (File folder : folderList.listFiles()) {
     				try {
 		    			for (File file : folder.listFiles()) {
@@ -140,7 +139,8 @@ public class StigUpdater {
 				pS.setString(6, currStig);
 				pS.execute();
 			}
-
+			
+			// The below queries delete all vulnerabilities that are no longer applicable according to DISA
 			db.createStatement().execute("delete from dbo.Ongoing "
 					+ "WHERE CUST_ID NOT IN ("
 					+ "SELECT dbo.Ongoing.CUST_ID "
@@ -162,6 +162,7 @@ public class StigUpdater {
 					+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG "
 					+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
 			
+			// The below updates the values in the main table if there were any new updates in the new STIG
 			db.createStatement().execute("UPDATE dbo.Main_Table " + 
 					"SET dbo.Main_Table.Title = (SELECT DISTINCT dbo.Stig_Table.Title FROM dbo.Stig_Table WHERE dbo.stig_table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG)," + 
 					"dbo.Main_Table.Severity = (SELECT DISTINCT dbo.Stig_Table.Severity FROM dbo.Stig_Table WHERE dbo.stig_table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG)," + 
