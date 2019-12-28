@@ -1,32 +1,45 @@
 package torres.jeff.database;
 
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JProgressBar;
+import java.awt.Color;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.LineBorder;
 
 public class Gui extends JFrame {
 
 	private JPanel contentPane;
-	private static ACAS acas;
-	
+	private ExecutorService exec;
+	private ExecutorService execExecNow;
+
+	private static JProgressBar progressBar;
+	private static int progressCount;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void run(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject) {
-		acas = acasObject;
-		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -41,11 +54,19 @@ public class Gui extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws SQLException 
+	 * @throws InterruptedException 
 	 */
-	public Gui(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject) {
-		setBounds(100, 100, 337, 520);
+	public Gui(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject) throws InterruptedException, SQLException {
+		setTitle("CyberSec");
+		setForeground(new Color(240, 255, 255));
+		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 321, 339);
 		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setBackground(new Color(255, 250, 250));
+		contentPane.setForeground(new Color(240, 248, 255));
+		contentPane.setBorder(new LineBorder(new Color(255, 0, 0), 2));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
@@ -61,7 +82,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewXccdfDirectory.setBounds(10, 431, 137, 39);
+		btnNewXccdfDirectory.setBounds(10, 253, 137, 39);
 		contentPane.add(btnNewXccdfDirectory);
 		
 		JButton btnNewCklDirectory = new JButton("New CKL Directory");
@@ -76,7 +97,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewCklDirectory.setBounds(10, 381, 137, 39);
+		btnNewCklDirectory.setBounds(10, 203, 137, 39);
 		contentPane.add(btnNewCklDirectory);
 		
 		JButton btnNewStigDirectory = new JButton("New STIG Directory");
@@ -91,7 +112,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewStigDirectory.setBounds(10, 331, 137, 39);
+		btnNewStigDirectory.setBounds(10, 153, 137, 39);
 		contentPane.add(btnNewStigDirectory);
 		
 		JButton btnNewBiDirectory = new JButton("New BI Directory");
@@ -106,7 +127,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewBiDirectory.setBounds(171, 331, 137, 39);
+		btnNewBiDirectory.setBounds(171, 153, 137, 39);
 		contentPane.add(btnNewBiDirectory);
 		
 		JButton btnNewAcasDirectory = new JButton("New ACAS Directory");
@@ -116,12 +137,13 @@ public class Gui extends JFrame {
 				String acasDropPath = "ACAS_Drop_Path";
 				try {
 					changeFilePath(acasDropPath, db);
+					
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
 			}
 		});
-		btnNewAcasDirectory.setBounds(171, 381, 137, 39);
+		btnNewAcasDirectory.setBounds(171, 203, 137, 39);
 		contentPane.add(btnNewAcasDirectory);
 		
 		JButton btnNewAssetDirectory = new JButton("New Asset Directory");
@@ -136,18 +158,129 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewAssetDirectory.setBounds(171, 431, 137, 39);
+		btnNewAssetDirectory.setBounds(171, 253, 137, 39);
 		contentPane.add(btnNewAssetDirectory);
+		
+		JButton btnChangeRunInterval = new JButton("Change Run Interval");
+		btnChangeRunInterval.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				JDialog d = new JDialog();
+				d.setTitle("Change Run Interval Time");
+				d.getContentPane().setLayout(new FlowLayout());
+				String text = "For Start time, enter number between 0-59. 0 means execute at the top of the hour. "
+						+ "For interval time, enter a number that represents how many minutes after the start time to execute the workflow. If you enter 60, "
+						+ "the program will run every hour after the start time."; 
+				JTextArea textArea = new JTextArea(2, 15);
+			    textArea.setText(text);
+			    textArea.setWrapStyleWord(true);
+			    textArea.setLineWrap(true);
+			    textArea.setOpaque(false);
+			    textArea.setEditable(false);
+			    textArea.setFocusable(false);
+				
+			    JLabel lblStartingTime = new JLabel("Starting Time: "); 
+				JTextField txtStartingTime = new JTextField(4);
+	            
+				JLabel lblIntervalTime = new JLabel("Interval Time: "); 
+				JTextField txtIntervalTime = new JTextField(4);
+				
+				JButton btnUpdate = new JButton("Update");
+				btnUpdate.addActionListener(new ActionListener() { 
+					public void actionPerformed(ActionEvent e) {
+						
+						if (txtStartingTime.getText().isEmpty() || txtIntervalTime.getText().isEmpty()) {
+							JOptionPane.showMessageDialog(null, "Both Fields Must Contain A Value, Try Again");							
+						} if (!txtStartingTime.getText().isEmpty() & !txtIntervalTime.getText().isEmpty() & (Integer.parseInt(txtIntervalTime.getText()) < 10 || Integer.parseInt(txtStartingTime.getText()) > 59)) {
+							JOptionPane.showMessageDialog(null, "Starting Time Must Be between 0-59 And \n"
+									+ "Interval Time Must Be Greater Than 10, Try Again");							
+						}
+							
+							else if (!txtStartingTime.getText().isEmpty() || !txtIntervalTime.getText().isEmpty()) {
+							try {
+								int startingTimeD = Integer.parseInt(txtStartingTime.getText());
+								int intervalTimeD = Integer.parseInt(txtIntervalTime.getText());
+								db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE intervalTime IS NOT NULL OR startTime IS NOT NULL");
+								db.createStatement().execute("INSERT INTO DBO.CONFIG (startTime) VALUES (" + startingTimeD + ")");
+								db.createStatement().execute("INSERT INTO DBO.CONFIG (intervalTime) VALUES ("+ intervalTimeD + ")");
+								ScheduledTasks.continueOrStopWhileLoop(false);
+								Thread.sleep(2000);
+								ScheduledTasks.destroyThread();
+								ScheduledTasks.continueOrStopWhileLoop(true);
+								shutdownExecService();
+								startExecutorService(db, stigUpdater, acasObject, bI);
+								JOptionPane.showMessageDialog(null, "UPDATE SUCCESSFUL");
+							} catch (SQLException | InterruptedException e1) {
+								e1.printStackTrace();
+								JOptionPane.showMessageDialog(null, "UPDATE UNSUCCESSFUL");
+							}							
+						} else {
+							JOptionPane.showMessageDialog(null, "UPDATE UNSUCCESSFUL \n"
+									+ "FOR UNKNOWN REASON");
+						}
+					}
+				});
+				btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 15));
+				
+				d.getContentPane().add(textArea);
+				d.getContentPane().add(lblStartingTime); 
+				d.getContentPane().add(txtStartingTime);
+				
+				d.getContentPane().add(lblIntervalTime);
+				d.getContentPane().add(txtIntervalTime);
+				
+				d.getContentPane().add(btnUpdate);
+				
+	            d.pack();
+	            d.setSize(225, 325); 
+	            d.setResizable(false);
+	            d.setLocationRelativeTo(contentPane);
+	            d.setVisible(true); 
+			}
+		});
+		btnChangeRunInterval.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		btnChangeRunInterval.setBounds(91, 103, 137, 39);
+		contentPane.add(btnChangeRunInterval);
+		
+		progressBar = new JProgressBar();
+		progressBar.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		progressBar.setForeground(new Color(50, 205, 50));
+		progressBar.setValue(0);
+		progressBar.setString("Not Running");
+		progressBar.setStringPainted(true);
+		progressBar.setMaximum(8);
+		progressBar.setBounds(71, 11, 176, 31);
+		contentPane.add(progressBar);
+		
+		JButton btnRunNow = new JButton("Run Now");
+		btnRunNow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				execExecNow = Executors.newFixedThreadPool(1);
+				execExecNow.execute(new Runnable() {
+					public void run() {
+						workflowStartingImmediate();
+						ScheduledTasks.immediateWorkflowExecution(db, stigUpdater, acasObject, bI);
+					}
+				});
+				execExecNow.shutdown();
+			}
+		});
+		btnRunNow.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		btnRunNow.setBounds(91, 53, 137, 39);
+		contentPane.add(btnRunNow);
+		
+		// This executes the workflow thread
+		startExecutorService(db, stigUpdater, acasObject, bI);
 	}
 	
 	public void changeFilePath(String pathToUpdate, Connection db) throws SQLException {
 		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir").toString()));
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
 		if (fileChooser.showSaveDialog(fileChooser) == fileChooser.APPROVE_OPTION) {
 			File file = new File(fileChooser.getSelectedFile().toString());
 			if (file.canWrite()) {
 				db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE " + pathToUpdate + " = '' OR " + pathToUpdate + " IS NOT NULL");
-				db.createStatement().execute("INSERT INTO DBO.CONFIG (XCCDF_DROP_PATH) VALUES ('" + file.toString() + "')");
+				db.createStatement().execute("INSERT INTO DBO.CONFIG ("+ pathToUpdate +") VALUES ('" + file.toString() + "')");
 				JOptionPane.showMessageDialog(null, "UPDATE WAS SUCCESSFUL");
 			} else if (!file.canWrite()) {
 				JOptionPane.showMessageDialog(null, "Your profile does not have permission to access this location,\n"
@@ -155,4 +288,66 @@ public class Gui extends JFrame {
 			} 
 		}
 	}
+	private void startExecutorService(Connection db, StigUpdater stigUpdater, ACAS acasObject, BiExporter bI) {
+		exec = Executors.newFixedThreadPool(1);
+		exec.execute(new Runnable() {
+			public void run() {
+				try {
+					ScheduledTasks.executeTasks(db, stigUpdater, acasObject, bI);
+				} catch (InterruptedException | SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		exec.shutdown();
+	}
+	private void shutdownExecService() {
+		exec.shutdownNow();
+	}
+	public static void addProgress() {
+		progressCount++;
+		switch (progressCount) {
+		case 1: progressBar.setString("Creating Folders"); progressBar.setValue(progressCount); break;
+		case 2: progressBar.setString("Importing Assets"); progressBar.setValue(progressCount); break;
+		case 3: progressBar.setString("Updating STIG's"); progressBar.setValue(progressCount); break;
+		case 4: progressBar.setString("Parsing CKL's"); progressBar.setValue(progressCount); break;
+		case 5: progressBar.setString("Parsing XCCDF's"); progressBar.setValue(progressCount); break;
+		case 6: progressBar.setString("Running Queries"); progressBar.setValue(progressCount); break;
+		case 7: progressBar.setString("Parsing ACAS"); progressBar.setValue(progressCount); break;
+		case 8: progressBar.setString("Exporting BI Files"); progressBar.setValue(progressCount); break;
+		}
+		
+	}
+	public static void resetProgress() {
+		progressCount = 0;
+		progressBar.setValue(0);
+		progressBar.setString("Not Running");
+	}
+	public static void workflowStartingImmediate() {
+		if (ScheduledTasks.workflowRunning == true) {
+			JOptionPane.showMessageDialog(null, "Queries Currently Running");
+		} else if (ScheduledTasks.workflowRunning == false) {
+
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -145,7 +145,9 @@ public class CreateTables  {
 					+ "Asset_Drop_Path varchar(255),"
 					+ "ACAS_Drop_Path varchar(255),"
 					+ "BI_Drop_Path varchar(255),"
-					+ "STIG_Drop_Path varchar(255))");
+					+ "STIG_Drop_Path varchar(255),"
+					+ "startTime int,"
+					+ "intervalTime int)");
 			} catch (Exception e) {
 				
 			}
