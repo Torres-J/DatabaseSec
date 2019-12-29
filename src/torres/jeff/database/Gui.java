@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,6 +40,7 @@ public class Gui extends JFrame {
 	private ExecutorService exec;
 	private ExecutorService execExecNow;
 	private ExecutorService execDBBackupNow;
+	private boolean threadsEnabled;
 
 
 	private static JProgressBar progressBar;
@@ -64,6 +66,12 @@ public class Gui extends JFrame {
 	 * @throws InterruptedException 
 	 */
 	public Gui(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject) throws InterruptedException, SQLException {
+		ResultSet rS = db.createStatement().executeQuery("SELECT THREADS_ENABLED FROM DBO.CONFIG WHERE THREADS_ENABLED IS NOT NULL");
+		while (rS.next()) {
+			boolean boolValue = rS.getBoolean("THREADS_ENABLED");
+			threadsEnabled = boolValue;
+		}
+		
 		setTitle("CyberSec");
 		ImageIcon img = new ImageIcon(this.getClass().getResource("/images/logo.png"));	
 		setIconImage(img.getImage());
@@ -195,24 +203,29 @@ public class Gui extends JFrame {
 				JButton btnUpdate = new JButton("Update");
 				btnUpdate.addActionListener(new ActionListener() { 
 					public void actionPerformed(ActionEvent e) {
-						
-						if (txtStartingTime.getText().isEmpty() || txtIntervalTime.getText().isEmpty()) {
+						if (threadsEnabled == false) {
+							JOptionPane.showMessageDialog(null, "You Cannot Change These Values If Threads Are Disabled");							
+						}
+						else if (txtStartingTime.getText().isEmpty() || txtIntervalTime.getText().isEmpty()) {
 							JOptionPane.showMessageDialog(null, "Both Fields Must Contain A Value, Try Again");							
-						} if (!txtStartingTime.getText().isEmpty() & !txtIntervalTime.getText().isEmpty() & (Integer.parseInt(txtIntervalTime.getText()) < 10 || Integer.parseInt(txtStartingTime.getText()) > 59)) {
+						} else if (!txtStartingTime.getText().isEmpty() & !txtIntervalTime.getText().isEmpty() & (Integer.parseInt(txtIntervalTime.getText()) < 10 || Integer.parseInt(txtStartingTime.getText()) > 59)) {
 							JOptionPane.showMessageDialog(null, "Starting Time Must Be between 0-59 And \n"
 									+ "Interval Time Must Be Greater Than 10, Try Again");							
-						}
+						} 
 							else if (!txtStartingTime.getText().isEmpty() || !txtIntervalTime.getText().isEmpty()) {
 							try {
+								System.out.println("ok");
 								int startingTimeD = Integer.parseInt(txtStartingTime.getText());
 								int intervalTimeD = Integer.parseInt(txtIntervalTime.getText());
 								db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE intervalTime IS NOT NULL OR startTime IS NOT NULL");
 								db.createStatement().execute("INSERT INTO DBO.CONFIG (startTime) VALUES (" + startingTimeD + ")");
 								db.createStatement().execute("INSERT INTO DBO.CONFIG (intervalTime) VALUES ("+ intervalTimeD + ")");
 								ScheduledTasks.continueOrStopWhileLoop(false);
+								ScheduledTasks.backupWorkflowLoop = false;
 								Thread.sleep(2000);
 								ScheduledTasks.destroyThread();
 								ScheduledTasks.continueOrStopWhileLoop(true);
+								ScheduledTasks.backupWorkflowLoop = true;
 								shutdownExecService();
 								startExecutorService(db, stigUpdater, acasObject, bI);
 								JOptionPane.showMessageDialog(null, "UPDATE SUCCESSFUL");
@@ -297,6 +310,44 @@ public class Gui extends JFrame {
 		contentPane.add(btnNewBackupDirectory);
 		
 		JToggleButton tglbtnDisableAutomation = new JToggleButton("Disable Automation");
+		if (threadsEnabled == false) {
+			tglbtnDisableAutomation.setSelected(true);
+		}
+		tglbtnDisableAutomation.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if (tglbtnDisableAutomation.isSelected()) {
+					shutdownExecService();
+					ScheduledTasks.backupWorkflowLoop = false;
+					ScheduledTasks.continueLoop = false;
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					ScheduledTasks.destroyThread();
+					ScheduledTasks.destroyThreadBackup();
+					try {
+						db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE THREADS_ENABLED IS NOT NULL");
+						db.createStatement().execute("INSERT INTO DBO.CONFIG (THREADS_ENABLED) VALUES (false)");
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					JOptionPane.showMessageDialog(null, "Threads Are Stopped");
+				} else if (!tglbtnDisableAutomation.isSelected()) {
+					ScheduledTasks.backupWorkflowLoop = true;
+					ScheduledTasks.continueLoop = true;
+					try {
+						db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE THREADS_ENABLED IS NOT NULL");
+						db.createStatement().execute("INSERT INTO DBO.CONFIG (THREADS_ENABLED) VALUES (true)");
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+					threadsEnabled = true;
+					startExecutorService(db, stigUpdater, acasObject, bI);
+					JOptionPane.showMessageDialog(null, "Threads Are Enabled");
+				}
+			}
+		});
 		tglbtnDisableAutomation.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		tglbtnDisableAutomation.setBounds(171, 96, 137, 39);
 		contentPane.add(tglbtnDisableAutomation);
@@ -346,7 +397,7 @@ public class Gui extends JFrame {
 		exec.execute(new Runnable() {
 			public void run() {
 				try {
-					ScheduledTasks.executeTasks(db, stigUpdater, acasObject, bI);
+					ScheduledTasks.executeTasks(db, stigUpdater, acasObject, bI, threadsEnabled);
 					
 				} catch (InterruptedException | SQLException e) {
 					e.printStackTrace();
@@ -356,7 +407,7 @@ public class Gui extends JFrame {
 		exec.execute(new Runnable() {
 			public void run() {
 				try {
-					ScheduledTasks.backupDatabase(db);
+					ScheduledTasks.backupDatabase(db, threadsEnabled);
 				} catch (SQLException | InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -412,21 +463,6 @@ public class Gui extends JFrame {
 	    }
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

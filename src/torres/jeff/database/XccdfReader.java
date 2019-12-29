@@ -77,7 +77,6 @@ public class XccdfReader {
 				        	pS.setString(3, results.get(i));
 				        	pS.setString(4, sysInfo.get(0));
 				        	pS.addBatch();
-				        	//db.createStatement().execute("INSERT INTO dbo.Stage_xc (Host_Name, V_ID, Status, STIG) VALUES ('" + export + "')");
 				        }  
 				        pS.executeBatch();
 					} catch (Exception e) {
@@ -96,6 +95,6 @@ public class XccdfReader {
 					vulnIDList.clear();
 					results.clear();
 				} 		
-				}	      
+			}	      
 		}
 	}				

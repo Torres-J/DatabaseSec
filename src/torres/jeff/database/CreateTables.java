@@ -150,7 +150,9 @@ public class CreateTables  {
 					+ "STIG_Drop_Path varchar(255),"
 					+ "startTime int,"
 					+ "intervalTime int,"
-					+ "DATABASE_BACKUP_DROP varchar(255))");
+					+ "DATABASE_BACKUP_DROP varchar(255),"
+					+ "THREADS_ENABLED boolean)");
+			db.createStatement().execute("insert into dbo.config (threads_enabled)  VALUES (true)");
 			} catch (Exception e) {
 			}
 	}
