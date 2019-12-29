@@ -132,7 +132,6 @@ public class ScheduledTasks {
 			while (backupWorkflowLoop) {
 				int hour = LocalDateTime.now().getHour();
 				int minute = LocalDateTime.now().getMinute();
-	    		System.out.println(hour + ":" + minute);
 				if (hour == 23 & minute == 59) {
 					executorServiceBackup.scheduleAtFixedRate(new Runnable() {
 					    public void run() {

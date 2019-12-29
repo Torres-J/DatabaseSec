@@ -78,7 +78,7 @@ public class Gui extends JFrame {
 		setForeground(new Color(240, 255, 255));
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 321, 432);
+		setBounds(100, 100, 326, 432);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 250, 250));
 		contentPane.setForeground(new Color(240, 248, 255));
@@ -349,7 +349,7 @@ public class Gui extends JFrame {
 			}
 		});
 		tglbtnDisableAutomation.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		tglbtnDisableAutomation.setBounds(171, 96, 137, 39);
+		tglbtnDisableAutomation.setBounds(171, 146, 137, 39);
 		contentPane.add(tglbtnDisableAutomation);
 		
 		JButton btnBackupDatabase = new JButton("Backup Database");
@@ -369,7 +369,7 @@ public class Gui extends JFrame {
 			}
 		});
 		btnBackupDatabase.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnBackupDatabase.setBounds(171, 146, 137, 39);
+		btnBackupDatabase.setBounds(171, 96, 137, 39);
 		contentPane.add(btnBackupDatabase);
 		
 		// This executes the workflow thread
