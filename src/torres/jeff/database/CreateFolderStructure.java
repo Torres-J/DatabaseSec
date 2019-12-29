@@ -50,14 +50,6 @@ public class CreateFolderStructure {
 		// The xccdf drop location that can be called by the XccdfReader class
 		workspacePathACASDrop = ACASDrop;
 		
-		
-		String settings = mainDirectory + "/settings";
-		File settingsDirectory = new File(settings);
-		if (!settingsDirectory.exists()) {
-			settingsDirectory.mkdir();
-		}
-		settingsDirectoryForImg = settingsDirectory + "/logo.png";
-		
 		// temp location, it may not be needed depending on 
 		String stigDrop = workSpace + "/STIG_Drop";
 		File stigDirectory = new File(stigDrop);
@@ -136,14 +128,6 @@ public class CreateFolderStructure {
 					workspacePathSTIGDrop = stigDirectoryNew;
 				}
 			}
-			/*
-			// log directory for testing. I'm not sure whether or not logs are necessary
-			String logDir = rS.getString("");
-			File logDirFilesNew = new File(logDir);
-			if (!rS.wasNull()) {
-				logDirFiles.mkdir();
-			}
-			*/
 			// The location where all .CSV files for BI are dropped
 			String biDirloc = rS.getString("BI_Drop_Path");
 			if (!rS.wasNull()) {

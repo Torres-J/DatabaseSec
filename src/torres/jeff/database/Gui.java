@@ -5,13 +5,11 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -20,17 +18,12 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.border.EmptyBorder;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JProgressBar;
 import java.awt.Color;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.SwingConstants;
-import java.awt.Component;
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 
@@ -233,9 +226,8 @@ public class Gui extends JFrame {
 							JOptionPane.showMessageDialog(null, "Starting Time Must Be between 0-59 And \n"
 									+ "Interval Time Must Be Greater Than 10, Try Again");							
 						} 
-							else if (!txtStartingTime.getText().isEmpty() || !txtIntervalTime.getText().isEmpty()) {
+							else if (!txtStartingTime.getText().isEmpty() & !txtIntervalTime.getText().isEmpty()) {
 							try {
-								System.out.println("ok");
 								int startingTimeD = Integer.parseInt(txtStartingTime.getText());
 								int intervalTimeD = Integer.parseInt(txtIntervalTime.getText());
 								db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE intervalTime IS NOT NULL OR startTime IS NOT NULL");
@@ -245,6 +237,7 @@ public class Gui extends JFrame {
 								ScheduledTasks.backupWorkflowLoop = false;
 								Thread.sleep(2000);
 								ScheduledTasks.destroyThread();
+								ScheduledTasks.destroyThreadBackup();
 								ScheduledTasks.continueOrStopWhileLoop(true);
 								ScheduledTasks.backupWorkflowLoop = true;
 								shutdownExecService();
@@ -353,6 +346,7 @@ public class Gui extends JFrame {
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
+					threadsEnabled = false;
 					JOptionPane.showMessageDialog(null, "Threads Are Stopped");
 				} else if (!tglbtnDisableAutomation.isSelected()) {
 					ScheduledTasks.backupWorkflowLoop = true;
@@ -450,8 +444,7 @@ public class Gui extends JFrame {
 		case 6: progressBar.setString("Running Queries"); progressBar.setValue(progressCount); break;
 		case 7: progressBar.setString("Parsing ACAS"); progressBar.setValue(progressCount); break;
 		case 8: progressBar.setString("Exporting BI Files"); progressBar.setValue(progressCount); break;
-		}
-		
+		}	
 	}
 	public static void resetProgress() {
 		progressCount = 0;
@@ -462,7 +455,6 @@ public class Gui extends JFrame {
 		if (ScheduledTasks.workflowRunning == true) {
 			JOptionPane.showMessageDialog(null, "Not Started: Queries Currently Running");
 		} else if (ScheduledTasks.workflowRunning == false) {
-
 		}
 	}
 	private static void backupDatabaseNow(Connection db) throws InterruptedException {
@@ -475,12 +467,12 @@ public class Gui extends JFrame {
 					JOptionPane.showMessageDialog(null, "Database Backup Successful");
 					break;
 				} catch (SQLException e) {
+					ScheduledTasks.workflowRunning = false;
 					JOptionPane.showMessageDialog(null, "Database Backup Unsuccessful");
 					e.printStackTrace();
 				}
 	    	}
-			Thread.sleep(2000);
-			
+			Thread.sleep(2000);		
 	    }
 	}
 }

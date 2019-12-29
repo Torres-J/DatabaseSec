@@ -185,8 +185,8 @@ public class ACAS {
 									+ "'Last Observed','Vuln Publication Date','Patch Publication Date','Plugin Publication Date')");
 							deleteOldRecords = false;
 						}
-						acasWorkflow();
 						pS.executeBatch();
+						acasWorkflow();
 					}
 				}
 				if (deleteOldRecords == true) {
@@ -243,7 +243,6 @@ public class ACAS {
 	}
 		deleteOldRecords = true;
 	}
-	
 	private void acasWorkflow() throws SQLException {
 		db.createStatement().execute("UPDATE DBO.ACAS " + 
 				"SET NETBIOS_NAME = DNS_NAME " + 
@@ -253,7 +252,6 @@ public class ACAS {
 				"WHERE NETBIOS_NAME IS NULL OR NETBIOS_NAME = ''");
 		db.createStatement().execute("UPDATE dbo.acas SET dbo.acas.GROUP_ORG = (SELECT dbo.assets.OU FROM dbo.assets WHERE dbo.assets.host_name like dbo.acas.netbios_name)");
 		db.createStatement().execute("UPDATE dbo.acas SET dbo.acas.GROUP_ORG = 'Group' WHERE dbo.acas.Plugin = 'Plugin' AND dbo.acas.Plugin_Name = 'Plugin Name'");
-
 	}
 }
 

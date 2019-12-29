@@ -28,7 +28,7 @@ public class MainWorkflow {
 			// No need for info on this table after the above queries run. It makes room for the next batch
 			db.createStatement().execute("DELETE FROM dbo.Stage_xc");	
 			
-			// Moves the oldest (earliest date) records into a temp table. Save time in teh future
+			// Moves the oldest (earliest date) records into a temp table. Save time in the future
 			db.createStatement().execute("INSERT INTO DBO.COMPLETED_TEMP1 (Host_Name, V_ID, STATUS, STIG, DATE_FOUND) " + 
 					"SELECT DISTINCT HOST_NAME, V_ID, STATUS, STIG, DATE_FOUND FROM (SELECT Host_Name, V_ID, STATUS, STIG, MIN(DATE_FOUND) as "
 					+ "DATE_FOUND FROM DBO.COMPLETED_Temp GROUP BY HOST_NAME, V_ID, Status, STIG) as f");
