@@ -17,6 +17,7 @@ public class CreateFolderStructure {
 	public static File workspacePathBIExportLocation;
 	public static File workspacePathSTIGDrop;
 	public static File workspacePathAssetDrop;
+	public static String settingsDirectoryForImg;
 
 	public static void createFolders(Connection db) throws SecurityException, IOException, SQLException {
 		ResultSet rSCount = db.createStatement().executeQuery("SELECT * FROM DBO.CONFIG");
@@ -49,13 +50,13 @@ public class CreateFolderStructure {
 		// The xccdf drop location that can be called by the XccdfReader class
 		workspacePathACASDrop = ACASDrop;
 		
-		/*
+		
 		String settings = mainDirectory + "/settings";
 		File settingsDirectory = new File(settings);
 		if (!settingsDirectory.exists()) {
 			settingsDirectory.mkdir();
 		}
-		*/
+		settingsDirectoryForImg = settingsDirectory + "/logo.png";
 		
 		// temp location, it may not be needed depending on 
 		String stigDrop = workSpace + "/STIG_Drop";
@@ -83,9 +84,7 @@ public class CreateFolderStructure {
 		if (!AssetDirDrop.exists()) {
 			AssetDirDrop.mkdir();
 		}
-		workspacePathAssetDrop = AssetDirDrop;
-		System.out.println(workspacePathAssetDrop);
-			
+		workspacePathAssetDrop = AssetDirDrop;			
 		
 		while (rS.next()) {
 			// Location of where CKL's are dropped for import is created. SCAP results are dropped in a different folder.
@@ -118,15 +117,6 @@ public class CreateFolderStructure {
 				}
 				workspacePathACASDrop = newACASDrop;
 			}
-			
-			
-			/*
-			String settings = mainDirectory + "/settings";
-			File settingsDirectory = new File(settings);
-			if (!settingsDirectory.exists()) {
-				settingsDirectory.mkdir();
-			}
-			*/
 			// stigDrop
 			String stigDropL = rS.getString("STIG_Drop_Path");
 			if (!rS.wasNull()) {
@@ -139,7 +129,6 @@ public class CreateFolderStructure {
 					workspacePathSTIGDrop = stigDirectoryNew;
 				}
 			}
-			
 			/*
 			// log directory for testing. I'm not sure whether or not logs are necessary
 			String logDir = rS.getString("");
@@ -157,7 +146,6 @@ public class CreateFolderStructure {
 				}
 				workspacePathBIExportLocation = biDirFileNew;
 			}
-			
 			// The location where Asset Lists can be dropped
 			String Asset_Drop_Path = rS.getString("Asset_Drop_Path");
 			if (!rS.wasNull()) {
@@ -169,6 +157,5 @@ public class CreateFolderStructure {
 			} 
 		}
 	}
-
 }
 

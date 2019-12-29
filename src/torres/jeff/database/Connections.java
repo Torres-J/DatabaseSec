@@ -17,6 +17,4 @@ public class Connections {
 		Connection connection = DriverManager.getConnection(JDBC_URL);
 		return connection;
 	}
-	
-	
 }

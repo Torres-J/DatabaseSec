@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
@@ -26,6 +27,10 @@ import java.awt.Color;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.SwingConstants;
+import java.awt.Component;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
 
 public class Gui extends JFrame {
 
@@ -35,7 +40,6 @@ public class Gui extends JFrame {
 
 	private static JProgressBar progressBar;
 	private static int progressCount;
-
 	/**
 	 * Launch the application.
 	 */
@@ -51,7 +55,6 @@ public class Gui extends JFrame {
 			}
 		});
 	}
-
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
@@ -59,10 +62,12 @@ public class Gui extends JFrame {
 	 */
 	public Gui(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject) throws InterruptedException, SQLException {
 		setTitle("CyberSec");
+		ImageIcon img = new ImageIcon(this.getClass().getResource("/images/logo.png"));	
+		setIconImage(img.getImage());
 		setForeground(new Color(240, 255, 255));
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 321, 339);
+		setBounds(100, 100, 321, 379);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 250, 250));
 		contentPane.setForeground(new Color(240, 248, 255));
@@ -82,7 +87,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewXccdfDirectory.setBounds(10, 253, 137, 39);
+		btnNewXccdfDirectory.setBounds(10, 300, 137, 39);
 		contentPane.add(btnNewXccdfDirectory);
 		
 		JButton btnNewCklDirectory = new JButton("New CKL Directory");
@@ -97,7 +102,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewCklDirectory.setBounds(10, 203, 137, 39);
+		btnNewCklDirectory.setBounds(10, 250, 137, 39);
 		contentPane.add(btnNewCklDirectory);
 		
 		JButton btnNewStigDirectory = new JButton("New STIG Directory");
@@ -112,7 +117,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewStigDirectory.setBounds(10, 153, 137, 39);
+		btnNewStigDirectory.setBounds(10, 200, 137, 39);
 		contentPane.add(btnNewStigDirectory);
 		
 		JButton btnNewBiDirectory = new JButton("New BI Directory");
@@ -127,7 +132,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewBiDirectory.setBounds(171, 153, 137, 39);
+		btnNewBiDirectory.setBounds(171, 200, 137, 39);
 		contentPane.add(btnNewBiDirectory);
 		
 		JButton btnNewAcasDirectory = new JButton("New ACAS Directory");
@@ -143,7 +148,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewAcasDirectory.setBounds(171, 203, 137, 39);
+		btnNewAcasDirectory.setBounds(171, 250, 137, 39);
 		contentPane.add(btnNewAcasDirectory);
 		
 		JButton btnNewAssetDirectory = new JButton("New Asset Directory");
@@ -158,7 +163,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewAssetDirectory.setBounds(171, 253, 137, 39);
+		btnNewAssetDirectory.setBounds(171, 300, 137, 39);
 		contentPane.add(btnNewAssetDirectory);
 		
 		JButton btnChangeRunInterval = new JButton("Change Run Interval");
@@ -194,7 +199,6 @@ public class Gui extends JFrame {
 							JOptionPane.showMessageDialog(null, "Starting Time Must Be between 0-59 And \n"
 									+ "Interval Time Must Be Greater Than 10, Try Again");							
 						}
-							
 							else if (!txtStartingTime.getText().isEmpty() || !txtIntervalTime.getText().isEmpty()) {
 							try {
 								int startingTimeD = Integer.parseInt(txtStartingTime.getText());
@@ -238,17 +242,17 @@ public class Gui extends JFrame {
 			}
 		});
 		btnChangeRunInterval.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnChangeRunInterval.setBounds(91, 103, 137, 39);
+		btnChangeRunInterval.setBounds(91, 150, 137, 39);
 		contentPane.add(btnChangeRunInterval);
 		
 		progressBar = new JProgressBar();
 		progressBar.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		progressBar.setForeground(new Color(50, 205, 50));
 		progressBar.setValue(0);
-		progressBar.setString("Not Running");
+		progressBar.setString("Waiting");
 		progressBar.setStringPainted(true);
 		progressBar.setMaximum(8);
-		progressBar.setBounds(71, 11, 176, 31);
+		progressBar.setBounds(71, 36, 176, 31);
 		contentPane.add(progressBar);
 		
 		JButton btnRunNow = new JButton("Run Now");
@@ -265,8 +269,14 @@ public class Gui extends JFrame {
 			}
 		});
 		btnRunNow.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnRunNow.setBounds(91, 53, 137, 39);
+		btnRunNow.setBounds(91, 100, 137, 39);
 		contentPane.add(btnRunNow);
+		
+		JLabel lblWorkflowStatus = new JLabel("Workflow Status");
+		lblWorkflowStatus.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		lblWorkflowStatus.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWorkflowStatus.setBounds(71, 11, 176, 25);
+		contentPane.add(lblWorkflowStatus);
 		
 		// This executes the workflow thread
 		startExecutorService(db, stigUpdater, acasObject, bI);
@@ -321,7 +331,7 @@ public class Gui extends JFrame {
 	public static void resetProgress() {
 		progressCount = 0;
 		progressBar.setValue(0);
-		progressBar.setString("Not Running");
+		progressBar.setString("Waiting");
 	}
 	public static void workflowStartingImmediate() {
 		if (ScheduledTasks.workflowRunning == true) {

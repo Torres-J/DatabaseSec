@@ -95,9 +95,7 @@ public class XccdfReader {
 					sysInfo.clear();
 					vulnIDList.clear();
 					results.clear();
-				} 
-				
-				}	
-		        
+				} 		
+				}	      
 		}
 	}				

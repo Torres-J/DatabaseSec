@@ -53,15 +53,12 @@ public class StigUpdater {
 	                //close this ZipEntry
 	                zis.closeEntry();
 	                ze = zis.getNextEntry();
-	            }
-	            
+	            }	            
 	            //close last ZipEntry
 	            zis.closeEntry();
 	            zis.close();
 	            fis.close();
-	            f.delete();
-	            
-	      
+	            f.delete();	      
 	    		File folderList = new File(stigDropString);
 	    		for (File folder : folderList.listFiles()) {
     				try {
@@ -77,10 +74,8 @@ public class StigUpdater {
 	        } catch (IOException e) {
 	            //e.printStackTrace();
 	        }
-        }
-        
+        }   
     }
-    
     // The runStigUpdate is called for each file after unzip is called, parses and imports the STIG to the DB
     private void runStigUpdate(Connection db, File xmlDoc) throws ParserConfigurationException, SQLException {
     	PreparedStatement pS = db.prepareStatement("INSERT INTO dbo.Stig_Table (V_ID,Severity,Title,Check_Text,Fix_Text,Stig) VALUES (?,?,?,?,?,?)");
@@ -139,7 +134,6 @@ public class StigUpdater {
 				pS.setString(6, currStig);
 				pS.execute();
 			}
-			
 			// The below queries delete all vulnerabilities that are no longer applicable according to DISA
 			db.createStatement().execute("delete from dbo.Ongoing "
 					+ "WHERE CUST_ID NOT IN ("
@@ -170,13 +164,8 @@ public class StigUpdater {
 					"dbo.Main_Table.Fix_Text = (SELECT DISTINCT dbo.Stig_Table.Fix_Text FROM dbo.Stig_Table WHERE dbo.stig_table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG)");
 			
 			
-		} catch (Exception e) {
-			
+		} catch (Exception e) {		
 			e.printStackTrace();
 		}
-		
-    	
-    	
     }
-
 }

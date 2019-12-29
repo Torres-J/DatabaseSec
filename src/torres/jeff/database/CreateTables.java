@@ -149,7 +149,6 @@ public class CreateTables  {
 					+ "startTime int,"
 					+ "intervalTime int)");
 			} catch (Exception e) {
-				
 			}
 	}
 }
