@@ -39,7 +39,7 @@ public class ScheduledTasks {
 				executorService.scheduleAtFixedRate(new Runnable() {
 				    public void run() {
 				    	try {
-					    	if (workflowRunning = false) {
+					    	if (workflowRunning == false) {
 					    		workflowRunning = true;
 					    		// Creates the directory and folders from where the JAR file is ran to interact with the DB
 					    		Gui.addProgress();
@@ -116,7 +116,7 @@ public class ScheduledTasks {
 	    		bI.exportBiFiles(db);
 	    		Gui.resetProgress();
 	    		System.out.println("done");
-	    		workflowRunning = true;
+	    		workflowRunning = false;
 			} else if (workflowRunning == true) {
 				
 			}

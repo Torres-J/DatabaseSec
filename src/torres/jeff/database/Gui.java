@@ -261,8 +261,8 @@ public class Gui extends JFrame {
 				execExecNow = Executors.newFixedThreadPool(1);
 				execExecNow.execute(new Runnable() {
 					public void run() {
-						workflowStartingImmediate();
 						ScheduledTasks.immediateWorkflowExecution(db, stigUpdater, acasObject, bI);
+						workflowStartingImmediate();
 					}
 				});
 				execExecNow.shutdown();

@@ -12,7 +12,7 @@ public class BiExporter {
 		File[] fileList = new File(biDir).listFiles();
 		for (File f : fileList) {
 			Process p = Runtime.getRuntime().exec("cmd.exe /c taskkill /f /FI \"windowtitle eq " + f.getName() + "*\"");
-			Thread.sleep(5000);
+			Thread.sleep(2000);
 			f.delete();
 		}
 		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select DISTINCT * from dbo.Main_Table'," + 
