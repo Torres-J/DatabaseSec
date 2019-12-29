@@ -54,6 +54,27 @@ public class Gui extends JFrame {
 				try {
 					Gui frame = new Gui(db, stigUpdater, bI, acasObject);
 					frame.setVisible(true);
+					
+					frame.addWindowListener(new java.awt.event.WindowAdapter() {
+					    @Override
+					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+					        if (JOptionPane.showConfirmDialog(frame, 
+					            "Are you sure you want to exit?", "Exit CyberSec?", 
+					            JOptionPane.YES_NO_OPTION,
+					            JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION){
+					        	try {
+					        		if (ScheduledTasks.workflowRunning == false) {
+					        			db.close();
+										System.exit(0);
+					        		} else if (ScheduledTasks.workflowRunning == true) {
+										JOptionPane.showMessageDialog(null, "Wait For Workflow to Finish or Data Corruption May Occur");
+					        		}
+								} catch (SQLException e) {
+									e.printStackTrace();
+								}
+					        }
+					    }
+					});
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -71,14 +92,14 @@ public class Gui extends JFrame {
 			boolean boolValue = rS.getBoolean("THREADS_ENABLED");
 			threadsEnabled = boolValue;
 		}
-		
+
 		setTitle("CyberSec");
 		ImageIcon img = new ImageIcon(this.getClass().getResource("/images/logo.png"));	
 		setIconImage(img.getImage());
 		setForeground(new Color(240, 255, 255));
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 326, 432);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setBounds(100, 100, 324, 432);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 250, 250));
 		contentPane.setForeground(new Color(240, 248, 255));
@@ -376,7 +397,7 @@ public class Gui extends JFrame {
 		startExecutorService(db, stigUpdater, acasObject, bI);
 	}
 	
-	public void changeFilePath(String pathToUpdate, Connection db) throws SQLException {
+	private void changeFilePath(String pathToUpdate, Connection db) throws SQLException {
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir").toString()));
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY); 
@@ -439,7 +460,7 @@ public class Gui extends JFrame {
 	}
 	public static void workflowStartingImmediate() {
 		if (ScheduledTasks.workflowRunning == true) {
-			JOptionPane.showMessageDialog(null, "Queries Currently Running");
+			JOptionPane.showMessageDialog(null, "Not Started: Queries Currently Running");
 		} else if (ScheduledTasks.workflowRunning == false) {
 
 		}

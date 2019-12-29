@@ -28,7 +28,7 @@ public class Asset_Importer {
 					pS.execute();
 				}
 				csvReader.close();
-				file.delete();
+				//file.delete();
 		} catch (Exception e) {
 			csvReader.close();
 			e.printStackTrace();
