@@ -135,9 +135,11 @@ public class CreateTables  {
 					+ "Patch_Publication_Date varchar(50),"
 					+ "Plugin_Publication_Date varchar(50),"
 					+ "Upload_Date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+			
 			} catch (Exception e) {
 				
 			}
+		
 		try {
 			db.createStatement().execute("CREATE TABLE dbo.CONFIG ("
 					+ "XCCDF_Drop_Path varchar(255),"
@@ -147,7 +149,8 @@ public class CreateTables  {
 					+ "BI_Drop_Path varchar(255),"
 					+ "STIG_Drop_Path varchar(255),"
 					+ "startTime int,"
-					+ "intervalTime int)");
+					+ "intervalTime int,"
+					+ "DATABASE_BACKUP_DROP varchar(255))");
 			} catch (Exception e) {
 			}
 	}

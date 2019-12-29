@@ -17,6 +17,8 @@ public class ScheduledTasks {
 	private static int startTime;
 	private static int intervalTime;
 	private static ScheduledExecutorService executorService;
+	private static ScheduledExecutorService executorServiceBackup;
+
 	private static boolean continueLoop = true;
 	public static boolean workflowRunning = false;
 	
@@ -125,4 +127,55 @@ public class ScheduledTasks {
 				e.printStackTrace();
 		}
 	}
+	public static void backupDatabase(Connection db) throws SQLException, InterruptedException {
+		executorServiceBackup = Executors.newScheduledThreadPool(1);
+		while (true) {
+			int hour = LocalDateTime.now().getHour();
+			int minute = LocalDateTime.now().getMinute();
+			if (hour == 23 & minute == 59) {
+				executorService.scheduleAtFixedRate(new Runnable() {
+				    public void run() {
+				    	while (true) {
+					    	if (workflowRunning == false) {
+					    		workflowRunning = true;
+					    		try {
+									db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE('" + CreateFolderStructure.backupDirectoryLocation.toString() + "')");
+									workflowRunning = false;
+									break;
+								} catch (SQLException e) {
+									e.printStackTrace();
+								}
+					    	}
+					    	try {
+								Thread.sleep(5000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+					    }
+				    }
+				}, 0, 1440, TimeUnit.MINUTES);
+				break;
+			}
+			Thread.sleep(5000);
+		}
+	}
+	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

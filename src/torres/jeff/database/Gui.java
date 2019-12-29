@@ -31,12 +31,15 @@ import javax.swing.SwingConstants;
 import java.awt.Component;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JToggleButton;
 
 public class Gui extends JFrame {
 
 	private JPanel contentPane;
 	private ExecutorService exec;
 	private ExecutorService execExecNow;
+	private ExecutorService execDBBackupNow;
+
 
 	private static JProgressBar progressBar;
 	private static int progressCount;
@@ -67,7 +70,7 @@ public class Gui extends JFrame {
 		setForeground(new Color(240, 255, 255));
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 321, 379);
+		setBounds(100, 100, 321, 432);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 250, 250));
 		contentPane.setForeground(new Color(240, 248, 255));
@@ -87,7 +90,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewXccdfDirectory.setBounds(10, 300, 137, 39);
+		btnNewXccdfDirectory.setBounds(10, 346, 137, 39);
 		contentPane.add(btnNewXccdfDirectory);
 		
 		JButton btnNewCklDirectory = new JButton("New CKL Directory");
@@ -102,7 +105,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewCklDirectory.setBounds(10, 250, 137, 39);
+		btnNewCklDirectory.setBounds(10, 296, 137, 39);
 		contentPane.add(btnNewCklDirectory);
 		
 		JButton btnNewStigDirectory = new JButton("New STIG Directory");
@@ -117,7 +120,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewStigDirectory.setBounds(10, 200, 137, 39);
+		btnNewStigDirectory.setBounds(10, 246, 137, 39);
 		contentPane.add(btnNewStigDirectory);
 		
 		JButton btnNewBiDirectory = new JButton("New BI Directory");
@@ -132,7 +135,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewBiDirectory.setBounds(171, 200, 137, 39);
+		btnNewBiDirectory.setBounds(171, 246, 137, 39);
 		contentPane.add(btnNewBiDirectory);
 		
 		JButton btnNewAcasDirectory = new JButton("New ACAS Directory");
@@ -148,7 +151,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewAcasDirectory.setBounds(171, 250, 137, 39);
+		btnNewAcasDirectory.setBounds(171, 296, 137, 39);
 		contentPane.add(btnNewAcasDirectory);
 		
 		JButton btnNewAssetDirectory = new JButton("New Asset Directory");
@@ -163,7 +166,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewAssetDirectory.setBounds(171, 300, 137, 39);
+		btnNewAssetDirectory.setBounds(171, 346, 137, 39);
 		contentPane.add(btnNewAssetDirectory);
 		
 		JButton btnChangeRunInterval = new JButton("Change Run Interval");
@@ -242,7 +245,7 @@ public class Gui extends JFrame {
 			}
 		});
 		btnChangeRunInterval.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnChangeRunInterval.setBounds(91, 150, 137, 39);
+		btnChangeRunInterval.setBounds(10, 146, 137, 39);
 		contentPane.add(btnChangeRunInterval);
 		
 		progressBar = new JProgressBar();
@@ -269,7 +272,7 @@ public class Gui extends JFrame {
 			}
 		});
 		btnRunNow.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnRunNow.setBounds(91, 100, 137, 39);
+		btnRunNow.setBounds(10, 96, 137, 39);
 		contentPane.add(btnRunNow);
 		
 		JLabel lblWorkflowStatus = new JLabel("Workflow Status");
@@ -277,6 +280,46 @@ public class Gui extends JFrame {
 		lblWorkflowStatus.setHorizontalAlignment(SwingConstants.CENTER);
 		lblWorkflowStatus.setBounds(71, 11, 176, 25);
 		contentPane.add(lblWorkflowStatus);
+		
+		JButton btnNewBackupDirectory = new JButton("New Backup Directory");
+		btnNewBackupDirectory.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String backupDropPath = "DATABASE_BACKUP_DROP";
+				try {
+					changeFilePath(backupDropPath, db);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnNewBackupDirectory.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		btnNewBackupDirectory.setBounds(93, 196, 137, 39);
+		contentPane.add(btnNewBackupDirectory);
+		
+		JToggleButton tglbtnDisableAutomation = new JToggleButton("Disable Automation");
+		tglbtnDisableAutomation.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		tglbtnDisableAutomation.setBounds(171, 96, 137, 39);
+		contentPane.add(tglbtnDisableAutomation);
+		
+		JButton btnBackupDatabase = new JButton("Backup Database");
+		btnBackupDatabase.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				execDBBackupNow = Executors.newFixedThreadPool(1); 
+				execDBBackupNow.execute(new Runnable() {
+					public void run() {
+						try {
+							backupDatabaseNow(db);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+				execDBBackupNow.shutdown();
+			}
+		});
+		btnBackupDatabase.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		btnBackupDatabase.setBounds(171, 146, 137, 39);
+		contentPane.add(btnBackupDatabase);
 		
 		// This executes the workflow thread
 		startExecutorService(db, stigUpdater, acasObject, bI);
@@ -299,12 +342,22 @@ public class Gui extends JFrame {
 		}
 	}
 	private void startExecutorService(Connection db, StigUpdater stigUpdater, ACAS acasObject, BiExporter bI) {
-		exec = Executors.newFixedThreadPool(1);
+		exec = Executors.newFixedThreadPool(2);
 		exec.execute(new Runnable() {
 			public void run() {
 				try {
 					ScheduledTasks.executeTasks(db, stigUpdater, acasObject, bI);
+					
 				} catch (InterruptedException | SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		exec.execute(new Runnable() {
+			public void run() {
+				try {
+					ScheduledTasks.backupDatabase(db);
+				} catch (SQLException | InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
@@ -339,6 +392,24 @@ public class Gui extends JFrame {
 		} else if (ScheduledTasks.workflowRunning == false) {
 
 		}
+	}
+	private static void backupDatabaseNow(Connection db) throws InterruptedException {
+		while (true) {
+	    	if (ScheduledTasks.workflowRunning == false) {
+	    		ScheduledTasks.workflowRunning = true;
+	    		try {
+					db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_BACKUP_DATABASE('" + CreateFolderStructure.backupDirectoryLocation.toString() + "')");
+					ScheduledTasks.workflowRunning = false;
+					JOptionPane.showMessageDialog(null, "Database Backup Successful");
+					break;
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(null, "Database Backup Unsuccessful");
+					e.printStackTrace();
+				}
+	    	}
+			Thread.sleep(2000);
+			
+	    }
 	}
 }
 

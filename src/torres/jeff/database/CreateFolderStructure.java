@@ -17,10 +17,10 @@ public class CreateFolderStructure {
 	public static File workspacePathBIExportLocation;
 	public static File workspacePathSTIGDrop;
 	public static File workspacePathAssetDrop;
+	public static File backupDirectoryLocation;
 	public static String settingsDirectoryForImg;
 
 	public static void createFolders(Connection db) throws SecurityException, IOException, SQLException {
-		ResultSet rSCount = db.createStatement().executeQuery("SELECT * FROM DBO.CONFIG");
 		ResultSet rS = db.createStatement().executeQuery("SELECT * FROM DBO.CONFIG");
 		// Directory of where the program executes is created under a folder called workspace. Each files purpose is further divided into their own folder
 		String mainDirectory = System.getProperty("user.dir");
@@ -85,17 +85,24 @@ public class CreateFolderStructure {
 			AssetDirDrop.mkdir();
 		}
 		workspacePathAssetDrop = AssetDirDrop;			
-		
+		// The location where Asset Lists can be dropped
+		String backupDir = workSpace + "/Database_Backup";
+		File backupDirectoryLoc = new File(backupDir);
+		if (!backupDirectoryLoc.exists()) {
+			backupDirectoryLoc.mkdir();
+		}
+		backupDirectoryLocation = backupDirectoryLoc;	
+				
 		while (rS.next()) {
 			// Location of where CKL's are dropped for import is created. SCAP results are dropped in a different folder.
-			String cklDirectoryNew = rS.getString("CKL_Drop_Path");
+			String backupDirectoryNew = rS.getString("DATABASE_BACKUP_DROP");
 			if (!rS.wasNull()) {
 				//db.createStatement().execute("INSERT INTO DBO.METRICS (XCCDF_Drop_Path) VALUES ('" + workspacePathXccdfDrop.toString() + "')");
-				File newcklDrop = new File(cklDirectoryNew);
-				if (!newcklDrop.exists()) {
-					newcklDrop.mkdirs();
+				File newBackupDrop = new File(backupDirectoryNew);
+				if (!newBackupDrop.exists()) {
+					newBackupDrop.mkdirs();
 					}
-				workspacePathCKLDrop = newcklDrop;
+				backupDirectoryLocation = newBackupDrop;
 			} 
 			
 			// The xccdf drop location that can be called by the XccdfReader class. If not specified in the GUI, the default local directory is used.
