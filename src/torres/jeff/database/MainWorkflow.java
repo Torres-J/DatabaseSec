@@ -95,7 +95,25 @@ public class MainWorkflow {
         			+ "JOIN dbo.Stig_Table ON dbo.Completed.V_ID = dbo.Stig_Table.V_ID "
         			+ "LEFT JOIN dbo.Main_Table ON dbo.Main_Table.CUST_ID = dbo.Completed.CUST_ID "
         			+ "WHERE dbo.Completed.Stig = dbo.Stig_Table.Stig AND dbo.Main_Table.CUST_ID IS NULL");
-        			
+        	
+        	db.createStatement().execute("UPDATE DBO.Main_Table SET GROUP_ORG = '' WHERE GROUP_ORG IS NULL");
+        	db.createStatement().execute("DELETE FROM DBO.Scap_Open_Vulns");
+        	db.createStatement().execute("DELETE FROM DBO.Stig_Table_Scap");
+        	db.createStatement().execute("DELETE FROM DBO.SCAP_Metrics_Score");
+        	db.createStatement().execute("INSERT INTO DBO.Stig_Table_Scap (Group_Org, Severity, Total_Open) "
+        			+ "SELECT DBO.Main_Table.Group_Org, DBO.STIG_Table.Severity, count(distinct DBO.STIG_Table.V_ID) FROM DBO.STIG_Table "
+        			+ "JOIN DBO.Main_Table ON DBO.Main_Table.STIG = DBO.STIG_Table.STIG "
+        			+ "WHERE DBO.Main_Table.Status = 'fail' "
+        			+ "GROUP BY DBO.Main_Table.Group_Org, DBO.Stig_Table.Severity");
+        	db.createStatement().execute("INSERT INTO DBO.Scap_Open_Vulns (Group_Org, Severity, Open_V_ID) "
+        			+ "SELECT DBO.Main_Table.Group_Org, DBO.Main_Table.Severity, count(distinct DBO.Main_Table.V_ID) FROM DBO.Main_Table "
+        			+ "WHERE DBO.Main_Table.Status = 'fail' "
+        			+ "GROUP BY DBO.Main_Table.Group_Org, DBO.Main_Table.Severity");
+        	db.createStatement().execute("INSERT INTO DBO.SCAP_Metrics_Score (Group_Org, Open_V_ID, Severity, Total_Possible) "
+        			+ "SELECT DBO.Stig_Table_Scap.Group_Org, NULLIF(DBO.SCAP_OPEN_VULNS.Open_V_ID, 0) AS Total_Open, DBO.Stig_Table_Scap.Severity, NULLIF(DBO.STIG_Table_Scap.Total_Open, 0) AS Total_Possible " + 
+        			"FROM DBO.Stig_Table_Scap " + 
+        			"LEFT JOIN DBO.Scap_Open_Vulns ON DBO.Scap_Open_Vulns.Group_Org = DBO.Stig_Table_Scap.Group_Org AND DBO.Stig_Table_Scap.Severity = DBO.Scap_Open_Vulns.Severity");
+        	db.createStatement().execute("UPDATE DBO.SCAP_Metrics_Score SET OPEN_V_ID = 0 WHERE OPEN_V_ID IS NULL");		
 		}
         catch (Exception e) {
         	errorLog.log(Level.SEVERE, "XccdfReader Database Appending Error", e);

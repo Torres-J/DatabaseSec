@@ -23,10 +23,13 @@ public class BiExporter {
 				"'" + biDir + "/Metrics.csv" + "', null, null, null)");
 		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select DISTINCT * from dbo.Assets'," + 
 				"'" + biDir + "/Assets.csv" + "', null, null, null)");
-		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select Group_Org, Plugin, Plugin_Name, Family, Severity, IP_Address, Protocol, Port, MAC_Address, DNS_Name, NetBIOS_Name," + 
+		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select Group_Org, Plugin, Plugin_Name, Family, Severity, IP_Address, Protocol, Port, MAC_Address, DNS_Name, NetBIOS_Name, " + 
 				" Plugin_Text, First_Discovered, Last_Observed, Vuln_Publication_Date, Patch_Publication_Date, Plugin_Publication_Date from dbo.ACAS order by cust_id asc'," + 
 				"'" + biDir + "/ACAS.csv" + "', null, null, null)");
-		
+		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('SELECT Group_Org, Severity, COUNT(Plugin) FROM DBO.ACAS GROUP BY Group_Org, Severity',"
+				+ "'" + biDir + "/ACAS_Vuln_Metrics.csv" + "', null, null, null)");
+		db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_EXPORT_QUERY('select DISTINCT * from dbo.SCAP_Metrics_Score'," + 
+				"'" + biDir + "/SCAP_Metrics_Score.csv" + "', null, null, null)");
 	}
 
 }

@@ -155,5 +155,30 @@ public class CreateTables  {
 			db.createStatement().execute("insert into dbo.config (threads_enabled)  VALUES (true)");
 			} catch (Exception e) {
 			}
+		try {
+			db.createStatement().execute("CREATE TABLE dbo.Scap_Open_Vulns ("
+					+ "Group_Org varchar(255),"
+					+ "Severity varchar(20),"
+					+ "Open_V_ID int)");
+			
+			} catch (Exception e) {
+			}
+		try {
+			db.createStatement().execute("CREATE TABLE DBO.Stig_Table_Scap ("
+					+ "Group_Org varchar(255),"
+					+ "Severity varchar(15),"
+					+ "Total_Open int)");
+		} catch (Exception e) {
+		}
+		try {
+			db.createStatement().execute("CREATE TABLE DBO.SCAP_Metrics_Score ("
+					+ "Group_Org varchar(255),"
+					+ "Open_V_ID int,"
+					+ "Severity varchar(15),"
+					+ "Total_Possible int)");
+		} catch (Exception e) {
+			
+		}
+		
 	}
 }

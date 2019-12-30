@@ -252,6 +252,7 @@ public class ACAS {
 				"WHERE NETBIOS_NAME IS NULL OR NETBIOS_NAME = ''");
 		db.createStatement().execute("UPDATE dbo.acas SET dbo.acas.GROUP_ORG = (SELECT dbo.assets.OU FROM dbo.assets WHERE dbo.assets.host_name like dbo.acas.netbios_name)");
 		db.createStatement().execute("UPDATE dbo.acas SET dbo.acas.GROUP_ORG = 'Group' WHERE dbo.acas.Plugin = 'Plugin' AND dbo.acas.Plugin_Name = 'Plugin Name'");
+		db.createStatement().execute("UPDATE DBO.ACAS SET GROUP_ORG = '' WHERE GROUP_ORG IS NULL");
 	}
 }
 

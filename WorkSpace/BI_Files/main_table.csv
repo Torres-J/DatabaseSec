@@ -1,4 +1,4 @@
-46602,,"CKLFILE","V-7055","medium","fail","Digital signatures assigned to strongly named assemblies must be verified.","Use regedit to review the Windows registry key 
+51402,"","CKLFILE","V-7055","medium","fail","Digital signatures assigned to strongly named assemblies must be verified.","Use regedit to review the Windows registry key 
 HKLM\Software\Microsoft\StrongName\Verification. 
 There should be no assemblies or hash values listed under this registry key. If the StrongName\Verification key does not exist, this is not a finding.
 
@@ -12,14 +12,14 @@ All assemblies must require strong name verification in a production environment
 
 Strong name assemblies that do not require verification in a development or test environment must have documented approvals from the IAO.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 09:55:35.096"
-46604,"DFS SERVER","SERVERHOSTEX006","V-15823","medium","fail","Software certificate installation files must be removed from Windows 2012/2012 R2.","Search all drives for *.p12 and *.pfx files.
+51404,"DFS SERVER","SERVERHOSTEX006","V-15823","medium","fail","Software certificate installation files must be removed from Windows 2012/2012 R2.","Search all drives for *.p12 and *.pfx files.
 
 If any files with these extensions exist, this is a finding.
 
 This does not apply to server-based applications that have a requirement for certificate files or Adobe PreFlight certificate files. Some applications create files with extensions of .p12 that are not certificate installation files. Removal of non-certificate installation files from systems is not required. These must be documented with the ISSO.","Remove any certificate installation files (*.p12 and *.pfx) found on a system.
 
 This does not apply to server-based applications that have a requirement for certificate files, Adobe PreFlight certificate files, or non-certificate installation files with the same extension.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:30.826"
-46606,"DFS SERVER","SERVERHOSTEX006","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
+51406,"DFS SERVER","SERVERHOSTEX006","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
 
 Registry Hive: HKEY_LOCAL_MACHINE
 Registry Path: \SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\
@@ -36,7 +36,7 @@ AES256_HMAC_SHA1
 Future encryption types
 
 Note: Removing the previously allowed RC4_HMAC_MD5 encryption suite may have operational impacts and must be thoroughly tested for the environment before changing. This includes but is not limited to parent\child trusts where RC4 is still enabled; selecting ""The other domain supports Kerberos AES Encryption"" may be required on the domain trusts to allow client communication across the trust relationship.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:30.828"
-46608,"DFS SERVER","SERVERHOSTEX007","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
+51408,"DFS SERVER","SERVERHOSTEX007","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
 
 Registry Hive: HKEY_LOCAL_MACHINE
 Registry Path: \SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\
@@ -53,7 +53,7 @@ AES256_HMAC_SHA1
 Future encryption types
 
 Note: Removing the previously allowed RC4_HMAC_MD5 encryption suite may have operational impacts and must be thoroughly tested for the environment before changing. This includes but is not limited to parent\child trusts where RC4 is still enabled; selecting ""The other domain supports Kerberos AES Encryption"" may be required on the domain trusts to allow client communication across the trust relationship.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:30.967"
-46610,"DFS SERVER","SERVERHOSTEX007","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51410,"DFS SERVER","SERVERHOSTEX007","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -73,7 +73,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:30.986"
-46612,"ACTIVE DIRECTORY","SERVERHOSTEX008","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
+51412,"ACTIVE DIRECTORY","SERVERHOSTEX008","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
 
 Registry Hive: HKEY_LOCAL_MACHINE
 Registry Path: \SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\
@@ -90,7 +90,7 @@ AES256_HMAC_SHA1
 Future encryption types
 
 Note: Removing the previously allowed RC4_HMAC_MD5 encryption suite may have operational impacts and must be thoroughly tested for the environment before changing. This includes but is not limited to parent\child trusts where RC4 is still enabled; selecting ""The other domain supports Kerberos AES Encryption"" may be required on the domain trusts to allow client communication across the trust relationship.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:31.125"
-46614,"ACTIVE DIRECTORY","SERVERHOSTEX008","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51414,"ACTIVE DIRECTORY","SERVERHOSTEX008","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -110,7 +110,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:30.989"
-46616,"ACTIVE DIRECTORY","SERVERHOSTEX009","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
+51416,"ACTIVE DIRECTORY","SERVERHOSTEX009","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
 
 Registry Hive: HKEY_LOCAL_MACHINE
 Registry Path: \SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\
@@ -127,7 +127,7 @@ AES256_HMAC_SHA1
 Future encryption types
 
 Note: Removing the previously allowed RC4_HMAC_MD5 encryption suite may have operational impacts and must be thoroughly tested for the environment before changing. This includes but is not limited to parent\child trusts where RC4 is still enabled; selecting ""The other domain supports Kerberos AES Encryption"" may be required on the domain trusts to allow client communication across the trust relationship.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:31.328"
-46618,"SPECTRUM","SERVERHOSTEX010","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
+51418,"SPECTRUM","SERVERHOSTEX010","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
 
 Registry Hive: HKEY_LOCAL_MACHINE
 Registry Path: \SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\
@@ -144,7 +144,7 @@ AES256_HMAC_SHA1
 Future encryption types
 
 Note: Removing the previously allowed RC4_HMAC_MD5 encryption suite may have operational impacts and must be thoroughly tested for the environment before changing. This includes but is not limited to parent\child trusts where RC4 is still enabled; selecting ""The other domain supports Kerberos AES Encryption"" may be required on the domain trusts to allow client communication across the trust relationship.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:31.568"
-46620,"SPECTRUM","SERVERHOSTEX010","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51420,"SPECTRUM","SERVERHOSTEX010","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -164,7 +164,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:31.398"
-46622,"SPECTRUM","SERVERHOSTEX011","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51422,"SPECTRUM","SERVERHOSTEX011","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -184,7 +184,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:31.646"
-46624,"SPECTRUM","SERVERHOSTEX012","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51424,"SPECTRUM","SERVERHOSTEX012","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -204,7 +204,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:31.704"
-46626,"SQL","SERVERHOSTEX013","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51426,"SQL","SERVERHOSTEX013","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -224,7 +224,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:31.938"
-46628,"SQL","SERVERHOSTEX014","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51428,"SQL","SERVERHOSTEX014","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -244,7 +244,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:32.167"
-46630,"SQL","SERVERHOSTEX015","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51430,"SQL","SERVERHOSTEX015","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -264,7 +264,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:32.329"
-46632,"SHAREPOINT","SERVERHOSTEX016","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51432,"SHAREPOINT","SERVERHOSTEX016","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -284,7 +284,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:32.551"
-46634,"SHAREPOINT","SERVERHOSTEX017","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51434,"SHAREPOINT","SERVERHOSTEX017","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -304,7 +304,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:32.798"
-46636,"SHAREPOINT","SERVERHOSTEX018","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51436,"SHAREPOINT","SERVERHOSTEX018","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -324,7 +324,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:33.013"
-46638,,"SERVERHOSTEX019","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51438,"","SERVERHOSTEX019","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -344,7 +344,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:33.225"
-46640,"SHAREPOINT","SERVERHOSTEX020","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51440,"SHAREPOINT","SERVERHOSTEX020","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -364,7 +364,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:33.447"
-46642,"SPLUNK","SERVERHOSTEX021","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51442,"SPLUNK","SERVERHOSTEX021","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -384,7 +384,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:33.655"
-46644,"SPLUNK","SERVERHOSTEX022","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51444,"SPLUNK","SERVERHOSTEX022","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -404,7 +404,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:34.46"
-46646,"","SERVERHOSTEX023","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
+51446,"","SERVERHOSTEX023","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
 
 Registry Hive: HKEY_LOCAL_MACHINE
 Registry Path: \SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\
@@ -421,7 +421,7 @@ AES256_HMAC_SHA1
 Future encryption types
 
 Note: Removing the previously allowed RC4_HMAC_MD5 encryption suite may have operational impacts and must be thoroughly tested for the environment before changing. This includes but is not limited to parent\child trusts where RC4 is still enabled; selecting ""The other domain supports Kerberos AES Encryption"" may be required on the domain trusts to allow client communication across the trust relationship.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:34.636"
-46648,"","SERVERHOSTEX023","V-26490","medium","fail","The Impersonate a client after authentication user right must only be assigned to Administrators, Service, Local Service, and Network Service.","Verify the effective setting in Local Group Policy Editor.
+51448,"","SERVERHOSTEX023","V-26490","medium","fail","The Impersonate a client after authentication user right must only be assigned to Administrators, Service, Local Service, and Network Service.","Verify the effective setting in Local Group Policy Editor.
 
 Run ""gpedit.msc"".
 
@@ -446,7 +446,7 @@ Administrators
 Service
 Local Service
 Network Service","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:34.64"
-46650,"","SERVERHOSTEX023","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51450,"","SERVERHOSTEX023","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -466,7 +466,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:34.651"
-46652,"","SERVERHOSTEX024","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
+51452,"","SERVERHOSTEX024","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
 
 Registry Hive: HKEY_LOCAL_MACHINE
 Registry Path: \SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\
@@ -483,7 +483,7 @@ AES256_HMAC_SHA1
 Future encryption types
 
 Note: Removing the previously allowed RC4_HMAC_MD5 encryption suite may have operational impacts and must be thoroughly tested for the environment before changing. This includes but is not limited to parent\child trusts where RC4 is still enabled; selecting ""The other domain supports Kerberos AES Encryption"" may be required on the domain trusts to allow client communication across the trust relationship.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:34.784"
-46654,"","SERVERHOSTEX024","V-46473","medium","fail","Turn off Encryption Support must be enabled.","The policy value for Computer Configuration >> Administrative Templates >> Windows Components >> Internet Explorer >> Internet Control Panel >> Advanced Page >> ""Turn off Encryption Support"" must be ""Enabled"".
+51454,"","SERVERHOSTEX024","V-46473","medium","fail","Turn off Encryption Support must be enabled.","The policy value for Computer Configuration >> Administrative Templates >> Windows Components >> Internet Explorer >> Internet Control Panel >> Advanced Page >> ""Turn off Encryption Support"" must be ""Enabled"".
 
 Verify the only options selected are ""Use TLS 1.1"" and ""Use TLS 1.2"" from the drop-down box.
 
@@ -492,13 +492,13 @@ Procedure: Use the Windows Registry Editor to navigate to the following key: HKL
 Criteria: If the value for ""SecureProtocols"" is not REG_DWORD = ""2560"", this is a finding.","Set the policy value for Computer Configuration >> Administrative Templates >> Windows Components >> Internet Explorer >> Internet Control Panel >> Advanced Page >> ""Turn off Encryption Support"" to ""Enabled"".
 
 Select only ""Use TLS 1.1"" and ""Use TLS 1.2"" from the drop-down box.","MICROSOFT INTERNET EXPLORER 11 SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:34.836"
-46656,"","SERVERHOSTEX024","V-64717","medium","fail","Prevent ignoring certificate errors option must be enabled.","The policy value for Computer Configuration >> Administrative Templates >> Windows Components >> Internet Explorer >> Internet Control Panel >> ”Prevent ignoring certificate errors” must be ”Enabled”. 
+51456,"","SERVERHOSTEX024","V-64717","medium","fail","Prevent ignoring certificate errors option must be enabled.","The policy value for Computer Configuration >> Administrative Templates >> Windows Components >> Internet Explorer >> Internet Control Panel >> ”Prevent ignoring certificate errors” must be ”Enabled”. 
 
 Procedure: Use the Windows Registry Editor to navigate to the following key: HKLM\Software\Policies\Microsoft\Windows\CurrentVersion\Internet Settings. 
 
 Criteria: If the value ""PreventIgnoreCertErrors"" is REG_DWORD = 1, this is not a finding.
 ","Set the policy value for Computer Configuration >> Administrative Templates >> Windows Components >> Internet Explorer >> Internet Control Panel >> ”Prevent ignoring certificate errors” to ”Enabled”.   ","MICROSOFT INTERNET EXPLORER 11 SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:34.848"
-46658,"","SERVERHOSTEX024","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51458,"","SERVERHOSTEX024","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -518,7 +518,7 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:34.653"
-46660,"","SERVERHOSTEX025","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
+51460,"","SERVERHOSTEX025","V-21954","medium","fail","Kerberos encryption types must be configured to prevent the use of DES and RC4 encryption suites.","If the following registry value does not exist or is not configured as specified, this is a finding.
 
 Registry Hive: HKEY_LOCAL_MACHINE
 Registry Path: \SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Kerberos\Parameters\
@@ -535,7 +535,7 @@ AES256_HMAC_SHA1
 Future encryption types
 
 Note: Removing the previously allowed RC4_HMAC_MD5 encryption suite may have operational impacts and must be thoroughly tested for the environment before changing. This includes but is not limited to parent\child trusts where RC4 is still enabled; selecting ""The other domain supports Kerberos AES Encryption"" may be required on the domain trusts to allow client communication across the trust relationship.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:34.983"
-46662,"","SERVERHOSTEX025","V-26490","medium","fail","The Impersonate a client after authentication user right must only be assigned to Administrators, Service, Local Service, and Network Service.","Verify the effective setting in Local Group Policy Editor.
+51462,"","SERVERHOSTEX025","V-26490","medium","fail","The Impersonate a client after authentication user right must only be assigned to Administrators, Service, Local Service, and Network Service.","Verify the effective setting in Local Group Policy Editor.
 
 Run ""gpedit.msc"".
 
@@ -560,7 +560,7 @@ Administrators
 Service
 Local Service
 Network Service","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:34:34.986"
-46664,"","SERVERHOSTEX025","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
+51464,"","SERVERHOSTEX025","V-81495","medium","fail","Disable TLS RC4 cipher in .Net","Use regedit to review the following Windows registry keys:
 
 For 32-bit systems: HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\.NETFramework\v4.0.30319\
 
@@ -580,8 +580,8 @@ Modify or create the following Windows registry value: SchUseStrongCrypto
 
 Set SchUseStrongCrypto to a REG_DWORD value of “1”.
 ","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 12:34:34.852"
-46666,"SQL","TESTCKL","V-1070","medium","fail","Server systems must be located in a controlled access area, accessible only to authorized personnel.","Verify servers are located in controlled access areas that are accessible only to authorized personnel.  If systems are not adequately protected, this is a finding.","Ensure servers are located in secure, access-controlled areas.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:21:36.967"
-46668,"SQL","TESTCKL","V-1112","low","fail","Outdated or unused accounts must be removed from the system or disabled.","Run ""PowerShell"".
+51466,"SQL","TESTCKL","V-1070","medium","fail","Server systems must be located in a controlled access area, accessible only to authorized personnel.","Verify servers are located in controlled access areas that are accessible only to authorized personnel.  If systems are not adequately protected, this is a finding.","Ensure servers are located in secure, access-controlled areas.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:21:36.967"
+51468,"SQL","TESTCKL","V-1112","low","fail","Outdated or unused accounts must be removed from the system or disabled.","Run ""PowerShell"".
 
 Member servers and standalone systems:
 Copy or enter the lines below to the PowerShell window and enter. (Entering twice may be required. Do not include the quotes at the beginning and end of the query.)
@@ -615,13 +615,13 @@ Application accounts
 If any enabled accounts have not been logged on to within the past 35 days, this is a finding.
 
 Inactive accounts that have been reviewed and deemed to be required must be documented with the ISSO.","Regularly review accounts to determine if they are still active. Disable or delete any active accounts that have not been used in the last 35 days.","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 14:08:41.54"
-46670,"SQL","TESTCKL","V-2372","high","fail","Reversible password encryption must be disabled.","Verify the effective setting in Local Group Policy Editor.
+51470,"SQL","TESTCKL","V-2372","high","fail","Reversible password encryption must be disabled.","Verify the effective setting in Local Group Policy Editor.
 Run ""gpedit.msc"".
 
 Navigate to Local Computer Policy -> Computer Configuration -> Windows Settings -> Security Settings -> Account Policies -> Password Policy.
 
 If the value for ""Store password using reversible encryption"" is not set to ""Disabled"", this is a finding.","Configure the policy value for Computer Configuration -> Windows Settings -> Security Settings -> Account Policies -> Password Policy -> ""Store password using reversible encryption"" to ""Disabled"".","WINDOWS SERVER 2012/2012 R2 MEMBER SERVER SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 14:08:41.547"
-46672,"SQL","TESTCKL","V-30937","low","fail",".Net applications that invoke NetFx40_LegacySecurityPolicy must apply previous versions of .NET STIG guidance.","Open Windows explorer and search for all *.exe.config files.  This requirement does not apply to the caspol.exe assembly or other assemblies provided with the Windows OS or the Windows Secure Host Baseline (SHB).
+51472,"SQL","TESTCKL","V-30937","low","fail",".Net applications that invoke NetFx40_LegacySecurityPolicy must apply previous versions of .NET STIG guidance.","Open Windows explorer and search for all *.exe.config files.  This requirement does not apply to the caspol.exe assembly or other assemblies provided with the Windows OS or the Windows Secure Host Baseline (SHB).
 
 To find relevant files, you can run the FINDSTR command from an elevated (admin) command prompt: 
 FINDSTR /i /s ""NetFx40_LegacySecurityPolicy"" c:\*.exe.config 
@@ -630,7 +630,7 @@ This command will search all .""exe.config"" files on the c: drive partition for
 
 If the .NET application configuration file utilizes the legacy policy element and .NET STIG guidance that covers these legacy versions has not been applied, this is a finding.
 ","Apply the .NET Framework Security Checklist for .Net versions 1 through 3.5 when utilizing the NetFx40_LegacySecurityPolicy setting.","MICROSOFT DOTNET FRAMEWORK 4.0 STIG","2019-12-15 14:08:41.501"
-46674,"SQL","TESTCKL","V-46473","medium","fail","Turn off Encryption Support must be enabled.","The policy value for Computer Configuration >> Administrative Templates >> Windows Components >> Internet Explorer >> Internet Control Panel >> Advanced Page >> ""Turn off Encryption Support"" must be ""Enabled"".
+51474,"SQL","TESTCKL","V-46473","medium","fail","Turn off Encryption Support must be enabled.","The policy value for Computer Configuration >> Administrative Templates >> Windows Components >> Internet Explorer >> Internet Control Panel >> Advanced Page >> ""Turn off Encryption Support"" must be ""Enabled"".
 
 Verify the only options selected are ""Use TLS 1.1"" and ""Use TLS 1.2"" from the drop-down box.
 
@@ -639,7 +639,7 @@ Procedure: Use the Windows Registry Editor to navigate to the following key: HKL
 Criteria: If the value for ""SecureProtocols"" is not REG_DWORD = ""2560"", this is a finding.","Set the policy value for Computer Configuration >> Administrative Templates >> Windows Components >> Internet Explorer >> Internet Control Panel >> Advanced Page >> ""Turn off Encryption Support"" to ""Enabled"".
 
 Select only ""Use TLS 1.1"" and ""Use TLS 1.2"" from the drop-down box.","MICROSOFT INTERNET EXPLORER 11 SECURITY TECHNICAL IMPLEMENTATION GUIDE","2019-12-15 12:21:36.926"
-46676,"SQL","TESTCKL","V-7055","medium","fail","Digital signatures assigned to strongly named assemblies must be verified.","Use regedit to review the Windows registry key 
+51476,"SQL","TESTCKL","V-7055","medium","fail","Digital signatures assigned to strongly named assemblies must be verified.","Use regedit to review the Windows registry key 
 HKLM\Software\Microsoft\StrongName\Verification. 
 There should be no assemblies or hash values listed under this registry key. If the StrongName\Verification key does not exist, this is not a finding.
 
