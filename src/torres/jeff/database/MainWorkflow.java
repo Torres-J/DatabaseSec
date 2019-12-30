@@ -2,6 +2,8 @@ package torres.jeff.database;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,12 +11,18 @@ public class MainWorkflow {
 	
 	public static void startWorkflow(Connection db) throws SecurityException, IOException {
 		Logger errorLog = new ErrorLogging().logger(XccdfReader.class.getName(), "XccdfReader.log", Level.WARNING);
+		String ldt = LocalDateTime.now().toLocalDate().minus(90, ChronoUnit.DAYS).toString();
 		try {
 			// Deletes from the stage table where host_name does not exist for unknown reasons
 			db.createStatement().execute("DELETE FROM DBO.STAGE_XC where host_name = '' OR HOST_NAME iS NULL");
 			
 			db.createStatement().execute("INSERT INTO dbo.METRICS (OU, Host_Name) SELECT DISTINCT dbo.Assets.OU, dbo.STAGE_XC.Host_Name FROM dbo.STAGE_XC JOIN "
 					+ "dbo.Assets ON dbo.Assets.Host_Name LIKE dbo.STAGE_XC.Host_Name");
+			
+			// Deletes records if a hostname has not been scanned within 90 days
+			db.createStatement().execute("DELETE from dbo.ongoing where host_name NOT IN (SELECT Host_Name from DBO.METRICS WHERE DATE_FOUND >= '" + ldt + "')");
+			db.createStatement().execute("DELETE from dbo.completed where host_name NOT IN (SELECT Host_Name from DBO.METRICS WHERE DATE_FOUND >= '" + ldt + "')");
+
         	// simple insert with join on Stig_Table to save time in the future
 			db.createStatement().execute("INSERT INTO DBO.ONGOING (V_ID, Host_Name, Status, STIG, Date_Found) "
 					+ "Select DISTINCT dbo.STAGE_XC.V_ID, dbo.STAGE_XC.Host_Name, dbo.STAGE_XC.Status, DBO.Stig_Table.STIG, dbo.STAGE_XC.Date_Found from dbo.STAGE_XC " + 
@@ -96,6 +104,7 @@ public class MainWorkflow {
         			+ "LEFT JOIN dbo.Main_Table ON dbo.Main_Table.CUST_ID = dbo.Completed.CUST_ID "
         			+ "WHERE dbo.Completed.Stig = dbo.Stig_Table.Stig AND dbo.Main_Table.CUST_ID IS NULL");
         	
+        	// The below is used to create the scores for SCAP CCRI
         	db.createStatement().execute("UPDATE DBO.Main_Table SET GROUP_ORG = '' WHERE GROUP_ORG IS NULL");
         	db.createStatement().execute("DELETE FROM DBO.Scap_Open_Vulns");
         	db.createStatement().execute("DELETE FROM DBO.Stig_Table_Scap");

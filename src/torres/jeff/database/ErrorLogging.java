@@ -5,8 +5,6 @@ java.util.logging.*;
 
 public class ErrorLogging {
 	
-	
-	
 	public Logger logger(String className, String fileName, Level level) throws SecurityException, IOException {
 		String mainDirectory = System.getProperty("user.dir");
 		String logDir = mainDirectory + "/logs/";

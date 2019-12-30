@@ -8,9 +8,11 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -92,7 +94,7 @@ public class Gui extends JFrame {
 		setForeground(new Color(240, 255, 255));
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 324, 432);
+		setBounds(100, 100, 324, 487);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 250, 250));
 		contentPane.setForeground(new Color(240, 248, 255));
@@ -112,7 +114,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewXccdfDirectory.setBounds(10, 346, 137, 39);
+		btnNewXccdfDirectory.setBounds(10, 397, 137, 39);
 		contentPane.add(btnNewXccdfDirectory);
 		
 		JButton btnNewCklDirectory = new JButton("New CKL Directory");
@@ -127,7 +129,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewCklDirectory.setBounds(10, 296, 137, 39);
+		btnNewCklDirectory.setBounds(10, 347, 137, 39);
 		contentPane.add(btnNewCklDirectory);
 		
 		JButton btnNewStigDirectory = new JButton("New STIG Directory");
@@ -142,7 +144,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewStigDirectory.setBounds(10, 246, 137, 39);
+		btnNewStigDirectory.setBounds(10, 297, 137, 39);
 		contentPane.add(btnNewStigDirectory);
 		
 		JButton btnNewBiDirectory = new JButton("New BI Directory");
@@ -157,7 +159,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewBiDirectory.setBounds(171, 246, 137, 39);
+		btnNewBiDirectory.setBounds(171, 297, 137, 39);
 		contentPane.add(btnNewBiDirectory);
 		
 		JButton btnNewAcasDirectory = new JButton("New ACAS Directory");
@@ -173,7 +175,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewAcasDirectory.setBounds(171, 296, 137, 39);
+		btnNewAcasDirectory.setBounds(171, 347, 137, 39);
 		contentPane.add(btnNewAcasDirectory);
 		
 		JButton btnNewAssetDirectory = new JButton("New Asset Directory");
@@ -188,7 +190,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewAssetDirectory.setBounds(171, 346, 137, 39);
+		btnNewAssetDirectory.setBounds(171, 397, 137, 39);
 		contentPane.add(btnNewAssetDirectory);
 		
 		JButton btnChangeRunInterval = new JButton("Change Run Interval");
@@ -225,7 +227,7 @@ public class Gui extends JFrame {
 						} else if (!txtStartingTime.getText().isEmpty() & !txtIntervalTime.getText().isEmpty() & (Integer.parseInt(txtIntervalTime.getText()) < 10 || Integer.parseInt(txtStartingTime.getText()) > 59)) {
 							JOptionPane.showMessageDialog(null, "Starting Time Must Be between 0-59 And \n"
 									+ "Interval Time Must Be Greater Than 10, Try Again");							
-						} 
+						}
 							else if (!txtStartingTime.getText().isEmpty() & !txtIntervalTime.getText().isEmpty()) {
 							try {
 								int startingTimeD = Integer.parseInt(txtStartingTime.getText());
@@ -320,7 +322,7 @@ public class Gui extends JFrame {
 			}
 		});
 		btnNewBackupDirectory.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnNewBackupDirectory.setBounds(93, 196, 137, 39);
+		btnNewBackupDirectory.setBounds(93, 247, 137, 39);
 		contentPane.add(btnNewBackupDirectory);
 		
 		JToggleButton tglbtnDisableAutomation = new JToggleButton("Disable Automation");
@@ -386,6 +388,60 @@ public class Gui extends JFrame {
 		btnBackupDatabase.setFont(new Font("Tahoma", Font.PLAIN, 10));
 		btnBackupDatabase.setBounds(171, 96, 137, 39);
 		contentPane.add(btnBackupDatabase);
+		
+		JButton btnDeleteStigs = new JButton("Delete STIG's");
+		btnDeleteStigs.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<String> stigList = new ArrayList<String>();
+				try {
+					ResultSet rs = db.createStatement().executeQuery("SELECT DISTINCT STIG FROM DBO.STIG_TABLE");
+					while (rs.next()) {
+						stigList.add(rs.getString("STIG"));
+					}
+					String[] stigListString = new String[stigList.size()];
+					stigListString = stigList.toArray(stigListString);
+					JComboBox cb = new JComboBox(stigListString);
+					int input;
+					input = JOptionPane.showConfirmDialog(null, cb,"Select STIG To Delete", JOptionPane.DEFAULT_OPTION);
+					if (input == JOptionPane.OK_OPTION) {
+						String str = (String) cb.getSelectedItem();
+						int confirmBox = JOptionPane.showConfirmDialog(null, "Are You Sure You Want To Delete\n"
+								+ str);
+						if (confirmBox == JOptionPane.YES_OPTION) {
+							db.createStatement().execute("DELETE FROM DBO.STIG_TABLE WHERE STIG = '" + str + "'");
+							db.createStatement().execute("delete from dbo.Ongoing "
+									+ "WHERE CUST_ID NOT IN ("
+									+ "SELECT dbo.Ongoing.CUST_ID "
+									+ "FROM dbo.Ongoing "
+									+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Ongoing.V_ID AND dbo.Stig_Table.STIG = dbo.Ongoing.STIG "
+									+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
+							
+							db.createStatement().execute("delete from dbo.Completed "
+									+ "WHERE CUST_ID NOT IN ("
+									+ "SELECT dbo.Completed.CUST_ID "
+									+ "FROM dbo.Completed "
+									+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Completed.V_ID AND dbo.Stig_Table.STIG = dbo.Completed.STIG "
+									+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
+							
+							db.createStatement().execute("delete from dbo.Main_Table "
+									+ "WHERE CUST_ID NOT IN ("
+									+ "SELECT dbo.Main_Table.CUST_ID "
+									+ "FROM dbo.Main_Table "
+									+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG "
+									+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
+							JOptionPane.showMessageDialog(null, "Deletion Successful");
+						}
+						
+					}	
+				} catch (SQLException e) {
+					JOptionPane.showMessageDialog(null, "Deletion Unsuccessful For Uknown Reason");
+					e.printStackTrace();
+				}
+			}
+		});
+		btnDeleteStigs.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		btnDeleteStigs.setBounds(93, 196, 137, 39);
+		contentPane.add(btnDeleteStigs);
 		
 		// This executes the workflow thread
 		startExecutorService(db, stigUpdater, acasObject, bI);

@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Mon Dec 30 10:33:06 EST 2019:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-016f-5770-7a5e-000007278e70 
+Mon Dec 30 15:18:10 EST 2019:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-016f-5875-761a-00000727a410 
 on database directory C:\Users\Torre\git\DatabaseSec\VulnerabilityDB with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
 Loaded from file:/C:/Users/Torre/git/DatabaseSec/lib/derby.jar
 java.vendor=Oracle Corporation
