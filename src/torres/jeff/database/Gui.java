@@ -28,6 +28,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
+import javax.swing.JDesktopPane;
 
 public class Gui extends JFrame {
 
@@ -35,7 +36,7 @@ public class Gui extends JFrame {
 	private ExecutorService exec;
 	private ExecutorService execExecNow;
 	private ExecutorService execDBBackupNow;
-	private boolean threadsEnabled;
+	private static boolean threadsEnabled;
 
 
 	private static JProgressBar progressBar;
@@ -87,7 +88,6 @@ public class Gui extends JFrame {
 			boolean boolValue = rS.getBoolean("THREADS_ENABLED");
 			threadsEnabled = boolValue;
 		}
-
 		setTitle("CyberSec");
 		ImageIcon img = new ImageIcon(this.getClass().getResource("/images/logo.png"));	
 		setIconImage(img.getImage());
@@ -328,6 +328,7 @@ public class Gui extends JFrame {
 		JToggleButton tglbtnDisableAutomation = new JToggleButton("Disable Automation");
 		if (threadsEnabled == false) {
 			tglbtnDisableAutomation.setSelected(true);
+			progressBar.setString("Not Running");
 		}
 		tglbtnDisableAutomation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -349,6 +350,7 @@ public class Gui extends JFrame {
 						e.printStackTrace();
 					}
 					threadsEnabled = false;
+					progressBar.setString("Not Running");
 					JOptionPane.showMessageDialog(null, "Threads Are Stopped");
 				} else if (!tglbtnDisableAutomation.isSelected()) {
 					ScheduledTasks.backupWorkflowLoop = true;
@@ -361,6 +363,7 @@ public class Gui extends JFrame {
 					}
 					threadsEnabled = true;
 					startExecutorService(db, stigUpdater, acasObject, bI);
+					progressBar.setString("Waiting");
 					JOptionPane.showMessageDialog(null, "Threads Are Enabled");
 				}
 			}
@@ -406,34 +409,41 @@ public class Gui extends JFrame {
 					if (input == JOptionPane.OK_OPTION) {
 						String str = (String) cb.getSelectedItem();
 						int confirmBox = JOptionPane.showConfirmDialog(null, "Are You Sure You Want To Delete\n"
-								+ str);
+								+ str, "Delete This STIG", JOptionPane.YES_NO_OPTION);
 						if (confirmBox == JOptionPane.YES_OPTION) {
-							db.createStatement().execute("DELETE FROM DBO.STIG_TABLE WHERE STIG = '" + str + "'");
-							db.createStatement().execute("delete from dbo.Ongoing "
-									+ "WHERE CUST_ID NOT IN ("
-									+ "SELECT dbo.Ongoing.CUST_ID "
-									+ "FROM dbo.Ongoing "
-									+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Ongoing.V_ID AND dbo.Stig_Table.STIG = dbo.Ongoing.STIG "
-									+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
-							
-							db.createStatement().execute("delete from dbo.Completed "
-									+ "WHERE CUST_ID NOT IN ("
-									+ "SELECT dbo.Completed.CUST_ID "
-									+ "FROM dbo.Completed "
-									+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Completed.V_ID AND dbo.Stig_Table.STIG = dbo.Completed.STIG "
-									+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
-							
-							db.createStatement().execute("delete from dbo.Main_Table "
-									+ "WHERE CUST_ID NOT IN ("
-									+ "SELECT dbo.Main_Table.CUST_ID "
-									+ "FROM dbo.Main_Table "
-									+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG "
-									+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
-							JOptionPane.showMessageDialog(null, "Deletion Successful");
+							if (ScheduledTasks.workflowRunning == false) {
+								ScheduledTasks.workflowRunning = true;
+								db.createStatement().execute("DELETE FROM DBO.STIG_TABLE WHERE STIG = '" + str + "'");
+								db.createStatement().execute("delete from dbo.Ongoing "
+										+ "WHERE CUST_ID NOT IN ("
+										+ "SELECT dbo.Ongoing.CUST_ID "
+										+ "FROM dbo.Ongoing "
+										+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Ongoing.V_ID AND dbo.Stig_Table.STIG = dbo.Ongoing.STIG "
+										+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
+								
+								db.createStatement().execute("delete from dbo.Completed "
+										+ "WHERE CUST_ID NOT IN ("
+										+ "SELECT dbo.Completed.CUST_ID "
+										+ "FROM dbo.Completed "
+										+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Completed.V_ID AND dbo.Stig_Table.STIG = dbo.Completed.STIG "
+										+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
+								
+								db.createStatement().execute("delete from dbo.Main_Table "
+										+ "WHERE CUST_ID NOT IN ("
+										+ "SELECT dbo.Main_Table.CUST_ID "
+										+ "FROM dbo.Main_Table "
+										+ "JOIN dbo.Stig_Table ON dbo.Stig_Table.V_ID = dbo.Main_Table.V_ID AND dbo.Stig_Table.STIG = dbo.Main_Table.STIG "
+										+ "WHERE dbo.Stig_Table.V_ID IS NOT NULL AND dbo.Stig_Table.Stig IS NOT NULL)");
+								ScheduledTasks.workflowRunning = false;
+								JOptionPane.showMessageDialog(null, "Deletion Successful");
+							} else if (ScheduledTasks.workflowRunning == true) {
+								JOptionPane.showMessageDialog(null, "Workflow Currently Running, Try Again When It's Done");
+							}
 						}
 						
 					}	
 				} catch (SQLException e) {
+					ScheduledTasks.workflowRunning = false;
 					JOptionPane.showMessageDialog(null, "Deletion Unsuccessful For Uknown Reason");
 					e.printStackTrace();
 				}
@@ -505,7 +515,11 @@ public class Gui extends JFrame {
 	public static void resetProgress() {
 		progressCount = 0;
 		progressBar.setValue(0);
-		progressBar.setString("Waiting");
+		if (threadsEnabled == false) {
+			progressBar.setString("Not Running");
+		} else if (threadsEnabled == true) {
+			progressBar.setString("Waiting");
+		}
 	}
 	public static void workflowStartingImmediate() {
 		if (ScheduledTasks.workflowRunning == true) {
