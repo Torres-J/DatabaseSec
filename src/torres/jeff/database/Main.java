@@ -18,7 +18,7 @@ public class Main {
 		// Creates the driver that connects with the DB to the program. This is passed on to most classes so concurrency is appropriately handled
 		Connection db = new Connections().ConnectDB();
 		// Creates the database tables upon first running needed to store the data
-		CreateTables.createTables();
+		CreateTables.createTables(db);
 		// Creates the directory and folders from where the JAR file is ran to interact with the DB
 		CreateFolderStructure.createFolders(db);
 		// Creates the STIG Importer object so that it doesn't have to be instantiated again
