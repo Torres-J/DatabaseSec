@@ -179,6 +179,5 @@ public class CreateTables  {
 		} catch (Exception e) {
 			
 		}
-		
 	}
 }
