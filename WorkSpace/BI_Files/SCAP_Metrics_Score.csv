@@ -1,0 +1,19 @@
+"SQL",1,"high",33
+"SHAREPOINT",0,"low",2
+"SPECTRUM",2,"medium",257
+"ACTIVE DIRECTORY",2,"medium",257
+"SQL",2,"low",64
+"SPECTRUM",0,"low",61
+"SPLUNK",1,"medium",14
+"SPECTRUM",0,"high",33
+"SQL",4,"medium",391
+"DFS SERVER",0,"high",33
+"",0,"high",33
+"ACTIVE DIRECTORY",0,"high",33
+"",0,"low",64
+"ACTIVE DIRECTORY",0,"low",61
+"SHAREPOINT",1,"medium",14
+"SPLUNK",0,"low",2
+"DFS SERVER",0,"low",61
+"",6,"medium",391
+"DFS SERVER",3,"medium",257

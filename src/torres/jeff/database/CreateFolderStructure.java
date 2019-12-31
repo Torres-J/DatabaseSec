@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
+
 
 public class CreateFolderStructure {
 	
@@ -87,64 +89,101 @@ public class CreateFolderStructure {
 				
 		while (rS.next()) {
 			// Location of where CKL's are dropped for import is created. SCAP results are dropped in a different folder.
+			String cklDropNew = rS.getString("CKL_Drop_Path");
+			if (!rS.wasNull()) {
+				//db.createStatement().execute("INSERT INTO DBO.METRICS (XCCDF_Drop_Path) VALUES ('" + workspacePathXccdfDrop.toString() + "')");
+				File newCklDrop = new File(cklDropNew);
+				if (newCklDrop.exists() & newCklDrop.canWrite()) {
+					workspacePathCKLDrop = newCklDrop;
+				} else {
+					workspacePathCKLDrop = cklDirectory;
+					JOptionPane.showMessageDialog(null, "CKL Drop Folder: " + newCklDrop.toString() + "\n"
+							+ "Either No Longer Exists Or Your Profile Does Not Have Permission To Read/Write To This Location\n"
+							+ "Default Location In WorkSpace Will Be Used" );
+				}
+			} 
+
+			// Location where backups are stored
 			String backupDirectoryNew = rS.getString("DATABASE_BACKUP_DROP");
 			if (!rS.wasNull()) {
 				//db.createStatement().execute("INSERT INTO DBO.METRICS (XCCDF_Drop_Path) VALUES ('" + workspacePathXccdfDrop.toString() + "')");
 				File newBackupDrop = new File(backupDirectoryNew);
-				if (!newBackupDrop.exists()) {
-					newBackupDrop.mkdirs();
-					}
-				backupDirectoryLocation = newBackupDrop;
+				if (newBackupDrop.exists() & newBackupDrop.canWrite()) {
+					backupDirectoryLocation = newBackupDrop;
+				} else {
+					backupDirectoryLocation = backupDirectoryLoc;
+					JOptionPane.showMessageDialog(null, "Database Backup Folder: " + newBackupDrop.toString() + "\n"
+							+ "Either No Longer Exists Or Your Profile Does Not Have Permission To Read/Write To This Location\n"
+							+ "Default Location In WorkSpace Will Be Used" );
+				}
 			} 
 			
 			// The xccdf drop location that can be called by the XccdfReader class. If not specified in the GUI, the default local directory is used.
 			String XCCDF_Drop_PathNew = rS.getString("XCCDF_Drop_Path");
 			if (!rS.wasNull()) {
 				//db.createStatement().execute("INSERT INTO DBO.METRICS (XCCDF_Drop_Path) VALUES ('" + workspacePathXccdfDrop.toString() + "')");
-				xccdfDrop = new File(XCCDF_Drop_PathNew);
-				if (!xccdfDrop.exists()) {
-					xccdfDrop.mkdirs();
-					}
-				workspacePathXccdfDrop = xccdfDrop;
+				File xccdfDropNew = new File(XCCDF_Drop_PathNew);
+				if (xccdfDropNew.exists() & xccdfDropNew.canWrite()) {
+					workspacePathXccdfDrop = xccdfDropNew;
+				} else {
+					workspacePathXccdfDrop = xccdfDrop;
+					JOptionPane.showMessageDialog(null, "XCCDF Drop Folder: " + xccdfDrop.toString() + "\n"
+							+ "Either No Longer Exists Or Your Profile Does Not Have Permission To Read/Write To This Location\n"
+							+ "Default Location In WorkSpace Will Be Used" );
+				}
 			}
 			// The ACAS drop location that can be called by the ACAS class
 			String ACAS_Drop_PathNew = rS.getString("ACAS_Drop_Path");
 			if (!rS.wasNull()) {
 				File newACASDrop = new File(ACAS_Drop_PathNew);
-				if (!newACASDrop.exists()) {
-					newACASDrop.mkdirs();
+				if (newACASDrop.exists() & newACASDrop.canWrite()) {
+					workspacePathACASDrop = newACASDrop;
+				} else {
+					workspacePathACASDrop = ACASDrop;
+					JOptionPane.showMessageDialog(null, "ACAS Drop Folder: " + newACASDrop.toString() + "\n"
+							+ "Either No Longer Exists Or Your Profile Does Not Have Permission To Read/Write To This Location\n"
+							+ "Default Location In WorkSpace Will Be Used" );
 				}
-				workspacePathACASDrop = newACASDrop;
+				
 			}
 			// stigDrop
 			String stigDropL = rS.getString("STIG_Drop_Path");
 			if (!rS.wasNull()) {
 				File stigDirectoryNew = new File(stigDropL);
-				if (!stigDirectoryNew.exists()) {
-					stigDirectoryNew.mkdir();
-					if (!stigDirectoryNew.exists()) {
-						stigDirectoryNew.mkdirs();
-					}
+				if (stigDirectoryNew.exists() & stigDirectoryNew.canWrite()) {
 					workspacePathSTIGDrop = stigDirectoryNew;
+				} else {
+					workspacePathSTIGDrop = stigDirectory;
+					JOptionPane.showMessageDialog(null, "STIG Drop Folder: " + stigDirectoryNew.toString() + "\n"
+							+ "Either No Longer Exists Or Your Profile Does Not Have Permission To Read/Write To This Location\n"
+							+ "Default Location In WorkSpace Will Be Used" );
 				}
 			}
 			// The location where all .CSV files for BI are dropped
 			String biDirloc = rS.getString("BI_Drop_Path");
 			if (!rS.wasNull()) {
 				File biDirFileNew = new File(biDirloc);
-				if (!biDirFileNew.exists()) {
-					biDirFileNew.mkdir();
+				if (biDirFileNew.exists() & biDirFileNew.canWrite()) {
+					workspacePathBIExportLocation = biDirFileNew;
+				} else {
+					workspacePathBIExportLocation = biDirFile;
+					JOptionPane.showMessageDialog(null, "BI Directory Folder: " + biDirFileNew.toString() + "\n"
+							+ "Either No Longer Exists Or Your Profile Does Not Have Permission To Read/Write To This Location\n"
+							+ "Default Location In WorkSpace Will Be Used" );
 				}
-				workspacePathBIExportLocation = biDirFileNew;
 			}
 			// The location where Asset Lists can be dropped
 			String Asset_Drop_Path = rS.getString("Asset_Drop_Path");
 			if (!rS.wasNull()) {
 				File AssetDirDropNew = new File(Asset_Drop_Path);
-				if (!AssetDirDropNew.exists()) {
-					AssetDirDropNew.mkdirs();
-					}
-				workspacePathAssetDrop = AssetDirDropNew;
+				if (AssetDirDropNew.exists() & AssetDirDropNew.canWrite()) {
+					workspacePathAssetDrop = AssetDirDropNew;
+				} else {
+					workspacePathAssetDrop = AssetDirDrop;
+					JOptionPane.showMessageDialog(null, "Asset Drop Directory Folder: " + AssetDirDropNew.toString() + "\n"
+							+ "Either No Longer Exists Or Your Profile Does Not Have Permission To Read/Write To This Location\n"
+							+ "Default Location In WorkSpace Will Be Used" );
+				}
 			} 
 		}
 	}
