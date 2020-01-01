@@ -28,7 +28,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
-import javax.swing.JDesktopPane;
 
 public class Gui extends JFrame {
 
@@ -94,7 +93,7 @@ public class Gui extends JFrame {
 		setForeground(new Color(240, 255, 255));
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 324, 487);
+		setBounds(100, 100, 325, 487);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 250, 250));
 		contentPane.setForeground(new Color(240, 248, 255));
