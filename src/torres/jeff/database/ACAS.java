@@ -26,11 +26,16 @@ public class ACAS {
 	}
 	
 	public void beginParsingACAS() throws IOException, SQLException, InterruptedException {
-
-		for (File f : CreateFolderStructure.workspacePathACASDrop.listFiles()) {
-			Process p = Runtime.getRuntime().exec("cmd.exe /c taskkill /f /FI \"windowtitle eq " + f.getName() + "*\"");
+		
+		File filesExist = new File(CreateFolderStructure.workspacePathACASDrop.toString());
+		File[] fileList = filesExist.listFiles();
+		if (fileList.length > 0) {
+			for (File f : CreateFolderStructure.workspacePathACASDrop.listFiles()) {
+				Process p = Runtime.getRuntime().exec("cmd.exe /c taskkill /f /FI \"windowtitle eq " + f.getName() + "*\"");
+			}
+			Thread.sleep(2000);
 		}
-		Thread.sleep(2000);
+		
 		for (File f : CreateFolderStructure.workspacePathACASDrop.listFiles()) {
 			ArrayList<String> index = new ArrayList<String>();
 			LineNumberReader lineReader = new LineNumberReader(new InputStreamReader(new FileInputStream(f)));
@@ -139,11 +144,11 @@ public class ACAS {
 								+ "Plugin_Text, First_Discovered, Last_Observed, Vuln_Publication_Date, Patch_Publication_Date, Plugin_Publication_Date) VALUES "
 								+ "('Group','Plugin','Plugin Name','Family','Severity','IP Address','Protocol','Port','MAC Address','DNS Name','NetBIOS Name','Plugin Text','First Discovered',"
 								+ "'Last Observed','Vuln Publication Date','Patch Publication Date','Plugin Publication Date')");
-						db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_IMPORT_DATA('DBO', 'ACAS','" + columnNamesString + "','" + columnNumbersString + "','" + f.toString() + "', null, null, null, 1)");
+						db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_IMPORT_DATA_BULK('DBO', 'ACAS','" + columnNamesString + "','" + columnNumbersString + "','" + f.toString() + "', null, null, null, 0, 1)");
 						acasWorkflow();
 						resetIndex();
 					} else if (deleteOldRecords == false) {
-						db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_IMPORT_DATA('DBO', 'ACAS','" + columnNamesString + "','" + columnNumbersString + "','" + f.toString() + "', null, null, null, 1)");
+						db.createStatement().execute("CALL SYSCS_UTIL.SYSCS_IMPORT_DATA_BULK('DBO', 'ACAS','" + columnNamesString + "','" + columnNumbersString + "','" + f.toString() + "', null, null, null, 0, 1)");
 						acasWorkflow();
 						resetIndex();
 					}
@@ -166,6 +171,7 @@ public class ACAS {
 		db.createStatement().execute("UPDATE DBO.ACAS " + 
 				"SET NETBIOS_NAME = IP_ADDRESS " + 
 				"WHERE NETBIOS_NAME IS NULL OR NETBIOS_NAME = ''");
+		db.createStatement().execute("UPDATE DBO.ACAS SET NETBIOS_NAME = UPPER(NETBIOS_NAME) WHERE NETBIOS_NAME != 'NetBIOS Name'");
 		db.createStatement().execute("UPDATE dbo.acas SET dbo.acas.GROUP_ORG = (SELECT dbo.assets.OU FROM dbo.assets WHERE dbo.assets.host_name like dbo.acas.netbios_name)");
 		db.createStatement().execute("UPDATE dbo.acas SET dbo.acas.GROUP_ORG = 'Group' WHERE dbo.acas.Plugin = 'Plugin' AND dbo.acas.Plugin_Name = 'Plugin Name'");
 		db.createStatement().execute("UPDATE DBO.ACAS SET GROUP_ORG = '' WHERE GROUP_ORG IS NULL");

@@ -69,6 +69,7 @@ public class ScheduledTasks {
 						    		// Writes the primary tables. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
 						    		Gui.addProgress();
 						    		bI.exportBiFiles(db);
+						    		Gui.addProgress();
 						    		Gui.resetProgress();
 						    		workflowRunning = false;
 						    		System.out.println("done");
@@ -114,6 +115,7 @@ public class ScheduledTasks {
 		    		// Writes the primary tables. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
 		    		Gui.addProgress();
 		    		bI.exportBiFiles(db);
+		    		Gui.addProgress();
 		    		Gui.resetProgress();
 		    		System.out.println("done");
 		    		workflowRunning = false;

@@ -283,7 +283,7 @@ public class Gui extends JFrame {
 		progressBar.setValue(0);
 		progressBar.setString("Waiting");
 		progressBar.setStringPainted(true);
-		progressBar.setMaximum(8);
+		progressBar.setMaximum(9);
 		progressBar.setBounds(71, 36, 176, 31);
 		contentPane.add(progressBar);
 		
@@ -333,7 +333,6 @@ public class Gui extends JFrame {
 		tglbtnDisableAutomation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				if (tglbtnDisableAutomation.isSelected()) {
-					shutdownExecService();
 					ScheduledTasks.backupWorkflowLoop = false;
 					ScheduledTasks.continueLoop = false;
 					try {
@@ -341,6 +340,7 @@ public class Gui extends JFrame {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+					shutdownExecService();
 					ScheduledTasks.destroyThread();
 					ScheduledTasks.destroyThreadBackup();
 					try {
@@ -510,6 +510,7 @@ public class Gui extends JFrame {
 		case 6: progressBar.setString("Running Queries"); progressBar.setValue(progressCount); break;
 		case 7: progressBar.setString("Parsing ACAS"); progressBar.setValue(progressCount); break;
 		case 8: progressBar.setString("Exporting BI Files"); progressBar.setValue(progressCount); break;
+		case 9: progressBar.setString("Done"); progressBar.setValue(progressCount); break;
 		}	
 	}
 	public static void resetProgress() {
