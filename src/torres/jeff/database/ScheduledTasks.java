@@ -64,8 +64,8 @@ public class ScheduledTasks {
 						    		Gui.addProgress();
 						    		MainWorkflow.startWorkflow(db);
 						    		// Parses ACAS file. Data is always overwritten. The file must always contain all current vulnerabilities
-						    		acas.beginParsingACAS();
 						    		Gui.addProgress();
+						    		acas.beginParsingACAS();
 						    		// Writes the primary tables. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
 						    		Gui.addProgress();
 						    		bI.exportBiFiles(db);
@@ -109,8 +109,8 @@ public class ScheduledTasks {
 		    		Gui.addProgress();
 		    		MainWorkflow.startWorkflow(db);
 		    		// Parses ACAS file. Data is always overwritten. The file must always contain all current vulnerabilities
-		    		acas.beginParsingACAS();
 		    		Gui.addProgress();
+		    		acas.beginParsingACAS();
 		    		// Writes the primary tables. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
 		    		Gui.addProgress();
 		    		bI.exportBiFiles(db);
