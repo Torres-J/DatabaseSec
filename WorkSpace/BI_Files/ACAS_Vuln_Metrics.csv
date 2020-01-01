@@ -1,5 +1,20 @@
-"","Critical",2
-"","High",17
-"","Low",53
-"","Medium",322
+"","High",8
+"","Low",36
+"","Medium",134
+"ACTIVE DIRECTORY","High",4
+"ACTIVE DIRECTORY","Low",16
+"ACTIVE DIRECTORY","Medium",58
+"DFS SERVER","High",2
+"DFS SERVER","Low",10
+"DFS SERVER","Medium",62
 "Group","Severity",1
+"SHAREPOINT","Critical",2
+"SHAREPOINT","High",12
+"SHAREPOINT","Low",24
+"SHAREPOINT","Medium",100
+"SPECTRUM","Critical",2
+"SPECTRUM","High",8
+"SPECTRUM","Low",8
+"SPECTRUM","Medium",158
+"SQL","Low",12
+"SQL","Medium",132
