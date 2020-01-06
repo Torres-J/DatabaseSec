@@ -27,7 +27,9 @@ public class Main {
 		BiExporter bI = new BiExporter();
 		// Creates the ACAS object
 		ACAS acas = new ACAS(db);
-		// Starts the GUI thread
-		Gui.run(db, stigUpdater, bI, acas);
+		// Starts sockets
+		Sockets startSocket = new Sockets();
+		// Starts the GUI
+		Gui.run(db, stigUpdater, bI, acas, startSocket);
 	}
 }

@@ -23,9 +23,12 @@ import javax.swing.JTextArea;
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JProgressBar;
+
+import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.border.LineBorder;
 import javax.swing.SwingConstants;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 
@@ -36,6 +39,7 @@ public class Gui extends JFrame {
 	private ExecutorService execExecNow;
 	private ExecutorService execDBBackupNow;
 	private static boolean threadsEnabled;
+	private static boolean stigCheckerEnabled = false;
 
 
 	private static JProgressBar progressBar;
@@ -43,11 +47,11 @@ public class Gui extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void run(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject) {
+	public static void run(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject, Sockets socket) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Gui frame = new Gui(db, stigUpdater, bI, acasObject);
+					Gui frame = new Gui(db, stigUpdater, bI, acasObject, socket);
 					frame.setVisible(true);
 					
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -81,7 +85,7 @@ public class Gui extends JFrame {
 	 * @throws SQLException 
 	 * @throws InterruptedException 
 	 */
-	public Gui(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject) throws InterruptedException, SQLException {
+	public Gui(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject, Sockets socket) throws InterruptedException, SQLException {
 		ResultSet rS = db.createStatement().executeQuery("SELECT THREADS_ENABLED FROM DBO.CONFIG WHERE THREADS_ENABLED IS NOT NULL");
 		while (rS.next()) {
 			boolean boolValue = rS.getBoolean("THREADS_ENABLED");
@@ -408,7 +412,7 @@ public class Gui extends JFrame {
 					if (input == JOptionPane.OK_OPTION) {
 						String str = (String) cb.getSelectedItem();
 						int confirmBox = JOptionPane.showConfirmDialog(null, "Are You Sure You Want To Delete\n"
-								+ str, "Delete This STIG", JOptionPane.YES_NO_OPTION);
+								+ str, " Delete This STIG", JOptionPane.YES_NO_OPTION);
 						if (confirmBox == JOptionPane.YES_OPTION) {
 							if (ScheduledTasks.workflowRunning == false) {
 								ScheduledTasks.workflowRunning = true;
@@ -449,8 +453,22 @@ public class Gui extends JFrame {
 			}
 		});
 		btnDeleteStigs.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnDeleteStigs.setBounds(93, 196, 137, 39);
+		btnDeleteStigs.setBounds(10, 197, 137, 39);
 		contentPane.add(btnDeleteStigs);
+		
+		JButton btnStigChecker = new JButton("STIG Checker");
+		btnStigChecker.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				StigCheckManagerDialog dialog = new StigCheckManagerDialog(db);
+				dialog.setVisible(true);
+				dialog.setResizable(false);
+				dialog.setLocationRelativeTo(contentPane);
+			}
+		});
+		btnStigChecker.setFont(new Font("Tahoma", Font.PLAIN, 10));
+		btnStigChecker.setBounds(171, 197, 137, 39);
+		contentPane.add(btnStigChecker);
 		
 		// This executes the workflow thread
 		startExecutorService(db, stigUpdater, acasObject, bI);

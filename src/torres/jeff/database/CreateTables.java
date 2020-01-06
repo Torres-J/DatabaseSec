@@ -150,10 +150,20 @@ public class CreateTables  {
 					+ "startTime int,"
 					+ "intervalTime int,"
 					+ "DATABASE_BACKUP_DROP varchar(255),"
-					+ "THREADS_ENABLED boolean)");
+					+ "THREADS_ENABLED boolean,"
+					+ "Threads int,"
+					+ "DAYS_SINCE_SCAN int,"
+					+ "Stig_Checker_Enabled boolean,"
+					+ "Stig_Checker_Hostnames varchar(255))");
 			db.createStatement().execute("insert into dbo.config (threads_enabled)  VALUES (true)");
+			db.createStatement().execute("INSERT INTO dbo.CONFIG (THREADS, DAYS_SINCE_SCAN, Stig_Checker_Enabled) VALUES (20, 14, false)");
+
 			} catch (Exception e) {
 			}
+		try {
+			db.createStatement().execute("create table dbo.stig_check_assets (HostName varchar(255), LastScanDate DATE, ERROR_REASON varchar(255), PINGABLE varchar(3), latest_version(3))");
+				} catch (Exception e){
+				}
 		try {
 			db.createStatement().execute("CREATE TABLE dbo.Scap_Open_Vulns ("
 					+ "Group_Org varchar(255),"
