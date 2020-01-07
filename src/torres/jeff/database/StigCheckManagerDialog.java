@@ -85,7 +85,6 @@ public class StigCheckManagerDialog extends JDialog {
 	    	ResultSet threads = db.createStatement().executeQuery("SELECT Threads FROM dbo.Config WHERE Threads IS NOT NULL");
 	    	ResultSet daysSinceLastScan = db.createStatement().executeQuery("SELECT DAYS_SINCE_SCAN FROM dbo.Config WHERE DAYS_SINCE_SCAN IS NOT NULL");
 	    	ResultSet stigCheckerEnabledBool = db.createStatement().executeQuery("SELECT Stig_Checker_Enabled FROM dbo.Config WHERE Stig_Checker_Enabled IS NOT NULL");
-	    	ResultSet stigCheckerLocation = db.createStatement().executeQuery("SELECT Stig_Checker_Location FROM dbo.Config WHERE Stig_Checker_Location IS NOT NULL");
 	    	threads.next();
 			int numOfThreads = threads.getInt("Threads");
 			numOfThreadsTxtField.setText(String.valueOf(numOfThreads));
@@ -157,18 +156,14 @@ public class StigCheckManagerDialog extends JDialog {
 					String hostnameInput = JOptionPane.showInputDialog("Enter HostName of Device to Conduct STIG Checks");
 					if (hostnameInput != null) {
 						if (!hostnameInput.isEmpty()) {
-							hostname = hostnameInput;
+							hostname = hostnameInput.toUpperCase();
 							String userInput = JOptionPane.showInputDialog("Enter Program Path of Device to Conduct STIG Checks,\n"
 									+ "Folder Will be Called AutoSTIG Automatically");
 							if (userInput != null) {
 								if (!userInput.isEmpty()) {
 									path = userInput + "\\AutoSTIG";
 									File file = new File(path);
-									System.out.println(file.toString());
-
 									if (!file.exists()) {
-										System.out.println("mkdir");
-
 										file.mkdirs();
 										if (file.exists()) {
 											if (file.canWrite()) {
@@ -176,6 +171,7 @@ public class StigCheckManagerDialog extends JDialog {
 													String input = hostname + "," + path;
 													db.createStatement().execute("INSERT INTO DBO.CONFIG (Stig_Checker_Hostnames) VALUES ('" + input + "')");
 													transportJar(input);
+													
 													JOptionPane.showMessageDialog(null, "Program Added");
 												} catch (SQLException | URISyntaxException | IOException e) {
 												}
@@ -184,7 +180,10 @@ public class StigCheckManagerDialog extends JDialog {
 											JOptionPane.showMessageDialog(null, "Your profile does not have permission to access this location,\n"
 													+ "Or this location does not exist.");
 										}
-									} else if (file.canWrite()) {
+									} else if (file.exists()) {
+										JOptionPane.showMessageDialog(null, "Program Already Exists");
+									}
+									/* else if (file.canWrite()) {
 										try {
 											String input = hostname + "," + path;
 											db.createStatement().execute("INSERT INTO DBO.CONFIG (Stig_Checker_Hostnames) VALUES ('" + input + "')");
@@ -192,7 +191,8 @@ public class StigCheckManagerDialog extends JDialog {
 											JOptionPane.showMessageDialog(null, "Program Added");
 										} catch (SQLException | URISyntaxException | IOException e) {
 										}
-									} else if (!file.canWrite()){
+									}*/
+									else if (!file.canWrite()){
 										JOptionPane.showMessageDialog(null, "Your profile does not have permission to access this location,\n"
 												+ "Or this location does not exist.");
 									}
@@ -212,11 +212,6 @@ public class StigCheckManagerDialog extends JDialog {
 			stigCheckerEnabledBool.next();
 			boolean stigsEnabled = stigCheckerEnabledBool.getBoolean("Stig_Checker_Enabled");
 			stigCheckerEnabled = stigsEnabled;
-			try {
-				stigCheckerLocation.next();
-				String stigProgramLoc = stigCheckerLocation.getString("Stig_Checker_Location");
-			} catch (Exception e) {
-			}
 			
 	    } catch (Exception e) {
 	    	e.printStackTrace();
@@ -254,16 +249,22 @@ public class StigCheckManagerDialog extends JDialog {
 				StandardCopyOption.REPLACE_EXISTING
 				};
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		URL url = classLoader.getResource("RunnableJars/AutoSTIG.jar");
+		URL url = classLoader.getResource("RunnableJars/AutoSTIG.exe");
 		File file = new File(url.toURI().getPath());
 		if (file.exists()) {
 			Path source = file.toPath();
 			String[] target = path.split(",");
-			String realTarget = target[1] + "\\AutoSTIG.jar";
+			String realTarget = target[1] + "\\AutoSTIG.exe";
 			Path destination = new File(realTarget).toPath();
 			Files.copy(source, destination, options);
 			}
 		}
+	private static String getPsExecLocation() throws URISyntaxException {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		URL url = classLoader.getResource("PSExec/PsExec.exe");
+		File file = new File(url.toURI().getPath());
+		return file.toString();
+	}
 }
 
 
