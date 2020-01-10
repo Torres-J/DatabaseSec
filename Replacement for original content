@@ -1,0 +1,17 @@
+
+BLOCKED FILE ALERT
+
+A file has been blocked due to the 'Level 1 File Types' rule.
+Context: 'PsExec.exe'
+Disallowed due to filename
+Ticket Number: '4c2c-5e13-8e9e-0002'
+
+----------------------------------------
+
+BLOCKED FILE ALERT
+
+A file has been blocked due to the 'Level 1 File Types' rule.
+Context: 'AutoSTIG.exe'
+Disallowed due to filename
+Ticket Number: '4c2c-5e13-8e9e-0002'
+See your system administrator for further information. Copyright 1999-2013 McAfee, Inc.All Rights Reserved.http://www.mcafee.com
