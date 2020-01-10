@@ -47,7 +47,7 @@ public class Gui extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void run(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject, Sockets socket) {
+	public static void run(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject, SocketsServer socket) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -85,7 +85,7 @@ public class Gui extends JFrame {
 	 * @throws SQLException 
 	 * @throws InterruptedException 
 	 */
-	public Gui(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject, Sockets socket) throws InterruptedException, SQLException {
+	public Gui(Connection db, StigUpdater stigUpdater, BiExporter bI, ACAS acasObject, SocketsServer socket) throws InterruptedException, SQLException {
 		ResultSet rS = db.createStatement().executeQuery("SELECT THREADS_ENABLED FROM DBO.CONFIG WHERE THREADS_ENABLED IS NOT NULL");
 		while (rS.next()) {
 			boolean boolValue = rS.getBoolean("THREADS_ENABLED");
@@ -460,7 +460,7 @@ public class Gui extends JFrame {
 		btnStigChecker.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				StigCheckManagerDialog dialog = new StigCheckManagerDialog(db);
+				StigCheckManagerDialog dialog = new StigCheckManagerDialog(db, socket);
 				dialog.setVisible(true);
 				dialog.setResizable(false);
 				dialog.setLocationRelativeTo(contentPane);

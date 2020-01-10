@@ -26,6 +26,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
@@ -42,9 +43,9 @@ public class StigCheckManagerDialog extends JDialog {
 	/**
 	 * Launch the application.
 	 */
-	public static void start(Connection db) {
+	public static void start(Connection db, SocketsServer socket) {
 		try {
-			StigCheckManagerDialog dialog = new StigCheckManagerDialog(db);
+			StigCheckManagerDialog dialog = new StigCheckManagerDialog(db, socket);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
 		} catch (Exception e) {
@@ -55,7 +56,7 @@ public class StigCheckManagerDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public StigCheckManagerDialog(Connection db) {
+	public StigCheckManagerDialog(Connection db, SocketsServer socket) {
 		setBounds(100, 100, 327, 417);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -153,27 +154,53 @@ public class StigCheckManagerDialog extends JDialog {
 				public void actionPerformed(ActionEvent arg0) {
 					String hostname;
 					String path;
+					String userName = null;
+					String password = null;
+					JTextField userNameField = new JTextField();
+					JTextField passwordField = new JPasswordField();
+					Object[] message = {
+					    "Username:", userNameField,
+					    "Password:", passwordField
+					};
 					String hostnameInput = JOptionPane.showInputDialog("Enter HostName of Device to Conduct STIG Checks");
 					if (hostnameInput != null) {
 						if (!hostnameInput.isEmpty()) {
 							hostname = hostnameInput.toUpperCase();
 							String userInput = JOptionPane.showInputDialog("Enter Program Path of Device to Conduct STIG Checks,\n"
-									+ "Folder Will be Called AutoSTIG Automatically");
+									+ "Folder Will be Called AutoSTIG Automatically, EXAMPLE:\n"
+									+ "C:\\Program Files\\CommandSoftware\n\n"
+									+ "*Note Paths That Require UAC Authentication Will Fail*");
 							if (userInput != null) {
 								if (!userInput.isEmpty()) {
-									path = userInput + "\\AutoSTIG";
+									path = "\\\\" + hostname + "\\" + userInput + "\\AutoSTIG";
+									path = path.replace(":", "$");
 									File file = new File(path);
 									if (!file.exists()) {
 										file.mkdirs();
 										if (file.exists()) {
 											if (file.canWrite()) {
 												try {
-													String input = hostname + "," + path;
-													db.createStatement().execute("INSERT INTO DBO.CONFIG (Stig_Checker_Hostnames) VALUES ('" + input + "')");
-													transportJar(input);
-													
-													JOptionPane.showMessageDialog(null, "Program Added");
+													while (true) {
+													int option = JOptionPane.showConfirmDialog(null, message, "Service Account", JOptionPane.OK_CANCEL_OPTION);
+													if (option == JOptionPane.OK_OPTION) {
+													    if (!userNameField.getText().isEmpty()) {
+													    	transportJar(path);
+													    	String scheduledTaskPath = hostname + "," + "\\\\" + hostname + "\\" + userInput + "\\AutoSTIG";
+													    	scheduledTaskPath = scheduledTaskPath.replace(":", "$");
+															db.createStatement().execute("INSERT INTO DBO.CONFIG (Stig_Checker_Hostnames, Stig_Checker_Finished) VALUES ('" + scheduledTaskPath + "','yes')");
+															//Process createScheduledTask = Runtime.getRuntime().exec("cmd.exe /c SCHTASKS /Create /S "+ hostname + " /U " + userNameField.getText() + " /P " + passwordField.getText()
+															//+ " /SC schedule ONSTART /TN AutoSTIG /TR");
+															JOptionPane.showMessageDialog(null, "Program Added");
+															break;
+													    } 												
+													} else {
+														JOptionPane.showMessageDialog(null, "UserName Field Cannot Be Empty");
+														break;
+													}
+													}
 												} catch (SQLException | URISyntaxException | IOException e) {
+													e.printStackTrace();
+													JOptionPane.showMessageDialog(null, "Error(170): Something Went Wrong");
 												}
 											}
 										} else if (!file.exists() || !file.canWrite()) {
@@ -253,8 +280,7 @@ public class StigCheckManagerDialog extends JDialog {
 		File file = new File(url.toURI().getPath());
 		if (file.exists()) {
 			Path source = file.toPath();
-			String[] target = path.split(",");
-			String realTarget = target[1] + "\\AutoSTIG.exe";
+			String realTarget = path + "\\AutoSTIG.exe";
 			Path destination = new File(realTarget).toPath();
 			Files.copy(source, destination, options);
 			}

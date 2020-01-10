@@ -20,7 +20,7 @@ public class CreateFolderStructure {
 	public static File workspacePathSTIGDrop;
 	public static File workspacePathAssetDrop;
 	public static File backupDirectoryLocation;
-	public static String settingsDirectoryForImg;
+	public static File workspacePathAutoSTIGResults;
 
 	public static void createFolders(Connection db) throws SecurityException, IOException, SQLException {
 		ResultSet rS = db.createStatement().executeQuery("SELECT * FROM DBO.CONFIG");
@@ -36,6 +36,14 @@ public class CreateFolderStructure {
 		}
 		// The ckl directory that can be called by the CKL_Parser class
 		workspacePathCKLDrop = cklDirectory;
+		
+		String autoSTIGD = workSpace + "/Auto_STIG_Drop";
+		File autoSTIGDirectory = new File(autoSTIGD);
+		if (!autoSTIGDirectory.exists()) {
+			autoSTIGDirectory.mkdir();
+		}
+		// The ckl directory that can be called by the CKL_Parser class
+		workspacePathAutoSTIGResults = autoSTIGDirectory;
 		
 		File xccdfDrop = new File(workSpace + "/xccdfDrop");
 		if (!xccdfDrop.exists()) {

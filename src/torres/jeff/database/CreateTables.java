@@ -154,7 +154,8 @@ public class CreateTables  {
 					+ "Threads int,"
 					+ "DAYS_SINCE_SCAN int,"
 					+ "Stig_Checker_Enabled boolean,"
-					+ "Stig_Checker_Hostnames varchar(255))");
+					+ "Stig_Checker_Hostnames varchar(255),"
+					+ "Stig_Checker_Finished varchar(3))");
 			db.createStatement().execute("insert into dbo.config (threads_enabled)  VALUES (true)");
 			db.createStatement().execute("INSERT INTO dbo.CONFIG (THREADS, DAYS_SINCE_SCAN, Stig_Checker_Enabled) VALUES (20, 14, false)");
 
