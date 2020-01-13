@@ -6,8 +6,11 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.CopyOption;
@@ -17,6 +20,8 @@ import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -38,8 +43,10 @@ public class StigCheckManagerDialog extends JDialog {
 	private boolean stigCheckerEnabled;
 	private JTextField numOfThreadsTxtField;
 	private JTextField daysSinceLastScanTxtField;
-	private FileDialog fc;
-
+	private static int programsRunningCount;
+	private static int programsTotalCount;
+	private static JLabel lblCurrentRunning;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -48,6 +55,7 @@ public class StigCheckManagerDialog extends JDialog {
 			StigCheckManagerDialog dialog = new StigCheckManagerDialog(db, socket);
 			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 			dialog.setVisible(true);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -55,8 +63,11 @@ public class StigCheckManagerDialog extends JDialog {
 
 	/**
 	 * Create the dialog.
+	 * @throws URISyntaxException 
 	 */
-	public StigCheckManagerDialog(Connection db, SocketsServer socket) {
+	public StigCheckManagerDialog(Connection db, SocketsServer socket) throws URISyntaxException {
+		
+		setModal(true);
 		setBounds(100, 100, 327, 417);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -127,8 +138,12 @@ public class StigCheckManagerDialog extends JDialog {
 							int confirmBox = JOptionPane.showConfirmDialog(null, "Are You Sure You Want To Delete\n"
 									+ str, " Delete This Program", JOptionPane.YES_NO_OPTION);
 							if (confirmBox == JOptionPane.YES_OPTION) {
-									db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE Stig_Checker_Hostnames = '" + str + "'");
+								if (!(str == "null")) {
 									String[] filePathSplit = str.split(",");
+									Process p = Runtime.getRuntime().exec("cmd.exe /c taskkill /S " + filePathSplit[0] + " /f /FI \"windowtitle eq AutoSTIG*\"");
+									Thread.sleep(4000);
+									db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE Stig_Checker_Hostnames = '" + str + "'");									
+									
 									File file = new File(filePathSplit[1]);
 									if (file.isDirectory()) {
 										for (File c : file.listFiles()) {
@@ -137,11 +152,14 @@ public class StigCheckManagerDialog extends JDialog {
 									}
 									file.delete();
 									JOptionPane.showMessageDialog(null, "Deletion Successful");
+								}
 							}
 						}	
-					} catch (SQLException e) {
+					} catch (SQLException | IOException e) {
 						JOptionPane.showMessageDialog(null, "Deletion Unsuccessful For Uknown Reason");
 						e.printStackTrace();
+					} catch (InterruptedException e) {
+						JOptionPane.showMessageDialog(null, "Task Could Not Be Killed On Remote Server");
 					}
 				}
 			});
@@ -152,17 +170,16 @@ public class StigCheckManagerDialog extends JDialog {
 			JButton btnHostnames = new JButton("Add Programs");
 			btnHostnames.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0) {
+					
 					String hostname;
 					String path;
 					String userName = null;
 					String password = null;
 					JTextField userNameField = new JTextField();
 					JTextField passwordField = new JPasswordField();
-					Object[] message = {
-					    "Username:", userNameField,
-					    "Password:", passwordField
-					};
+					
 					String hostnameInput = JOptionPane.showInputDialog("Enter HostName of Device to Conduct STIG Checks");
+
 					if (hostnameInput != null) {
 						if (!hostnameInput.isEmpty()) {
 							hostname = hostnameInput.toUpperCase();
@@ -181,26 +198,72 @@ public class StigCheckManagerDialog extends JDialog {
 											if (file.canWrite()) {
 												try {
 													while (true) {
-													int option = JOptionPane.showConfirmDialog(null, message, "Service Account", JOptionPane.OK_CANCEL_OPTION);
-													if (option == JOptionPane.OK_OPTION) {
-													    if (!userNameField.getText().isEmpty()) {
-													    	transportJar(path);
-													    	String scheduledTaskPath = hostname + "," + "\\\\" + hostname + "\\" + userInput + "\\AutoSTIG";
+
+														String[] buttons = { "Service Account", "Manual"};    
+														int returnValue = JOptionPane.showOptionDialog(null, "Service Account - This Option will require a username and password and enterprise admin\n"
+																+ "privilages to run the AutoSTIG program. A scheduled task will be created on the\n"
+																+ "target host\n\n"
+																+ "Manual - This Option will not require a service account, however the end user requires\n"
+																+ "administrative privilages on the endpoint running the AutoSTIG and\n"
+																+ "all hosts that will be scanned. They must also start the program manually", "Option Pane ",
+														        JOptionPane.PLAIN_MESSAGE, 0, null, buttons, buttons);
+														
+														if (returnValue == 0) {
+															Object[] message = {
+																    "Username:", userNameField,
+																    "Password:", passwordField
+																};
+															int option = JOptionPane.showConfirmDialog(null, message, "AutoSTIG Specifications", JOptionPane.OK_CANCEL_OPTION);
+															if (option == JOptionPane.OK_OPTION) {
+															    if (!userNameField.getText().isEmpty() & !passwordField.getText().isEmpty()) {
+															    	transportJar(path);
+															    	String scheduledTaskPath = hostname + "," + "\\\\" + hostname + "\\" + userInput + "\\AutoSTIG";
+															    	scheduledTaskPath = scheduledTaskPath.replace(":", "$");
+																	db.createStatement().execute("INSERT INTO DBO.CONFIG (Stig_Checker_Hostnames, Stig_Checker_Finished) VALUES ('" + scheduledTaskPath + "','yes')");
+																    String pathForSchedTask = userInput + "\\AutoSTIG\\AutoSTIG.exe";
+																	Process createScheduledTask = Runtime.getRuntime().exec("cmd.exe /c SCHTASKS /Create /S "+ hostname + " /RU " + userNameField.getText() + " /RP " + passwordField.getText()
+																	+ " /SC ONSTART /TN AutoSTIG /TR \"" + pathForSchedTask + "\"");
+																	InputStream stdIn = createScheduledTask.getInputStream();
+																	InputStreamReader isr = new InputStreamReader(stdIn);
+																	BufferedReader br = new BufferedReader(isr);
+																	String line = null;
+																	//
+																	// WIP HAVE TO CREATE THE LOGIC TO ENSURE THAT THE CREATION OF THE TASK SUCCEEDED
+																	//
+																	while ((line = br.readLine()) != null) {
+																		System.out.println(line);
+																	}
+																	JOptionPane.showMessageDialog(null, "Program Added");
+																	break;
+															    } else {
+																	JOptionPane.showMessageDialog(null, "UserName And Password Field Cannot Be Empty");
+																} 												
+															} else {
+																break;
+															}
+														} else if (returnValue == 1) {
+															transportJar(path);
+															String scheduledTaskPath = hostname + "," + "\\\\" + hostname + "\\" + userInput + "\\AutoSTIG";
 													    	scheduledTaskPath = scheduledTaskPath.replace(":", "$");
 															db.createStatement().execute("INSERT INTO DBO.CONFIG (Stig_Checker_Hostnames, Stig_Checker_Finished) VALUES ('" + scheduledTaskPath + "','yes')");
-															//Process createScheduledTask = Runtime.getRuntime().exec("cmd.exe /c SCHTASKS /Create /S "+ hostname + " /U " + userNameField.getText() + " /P " + passwordField.getText()
-															//+ " /SC schedule ONSTART /TN AutoSTIG /TR");
-															JOptionPane.showMessageDialog(null, "Program Added");
+															JOptionPane.showMessageDialog(null, "Program Added, Remember to Start The Program\n"
+																	+ "At The Endpoint Specified Below:\n" + scheduledTaskPath);
+
 															break;
-													    } 												
-													} else {
-														JOptionPane.showMessageDialog(null, "UserName Field Cannot Be Empty");
-														break;
-													}
+															//
+															//
+															//
+															//
+															//
+															//
+															//
+														} else if (returnValue == -1) {
+															break;
+														}
 													}
 												} catch (SQLException | URISyntaxException | IOException e) {
 													e.printStackTrace();
-													JOptionPane.showMessageDialog(null, "Error(170): Something Went Wrong");
+													JOptionPane.showMessageDialog(null, "Error(193): Something Went Wrong");
 												}
 											}
 										} else if (!file.exists() || !file.canWrite()) {
@@ -236,9 +299,21 @@ public class StigCheckManagerDialog extends JDialog {
 			btnHostnames.setFont(new Font("Tahoma", Font.PLAIN, 10));
 			btnHostnames.setBounds(10, 166, 122, 39);
 			contentPanel.add(btnHostnames);
+			
+			JLabel lblProgramsRunning = new JLabel("Programs Running");
+			lblProgramsRunning.setHorizontalAlignment(SwingConstants.CENTER);
+			lblProgramsRunning.setBounds(99, 23, 111, 14);
+			contentPanel.add(lblProgramsRunning);
+			
+			lblCurrentRunning = new JLabel("None");
+			lblCurrentRunning.setHorizontalAlignment(SwingConstants.CENTER);
+			lblCurrentRunning.setBounds(99, 49, 111, 14);
+			contentPanel.add(lblCurrentRunning);
 			stigCheckerEnabledBool.next();
 			boolean stigsEnabled = stigCheckerEnabledBool.getBoolean("Stig_Checker_Enabled");
 			stigCheckerEnabled = stigsEnabled;
+			lblCurrentRunning.setText(setProgramRunningInfo());
+			
 			
 	    } catch (Exception e) {
 	    	e.printStackTrace();
@@ -291,6 +366,24 @@ public class StigCheckManagerDialog extends JDialog {
 		File file = new File(url.toURI().getPath());
 		return file.toString();
 	}
+	public static void setMaxHostsRunning(int i) {	
+		programsTotalCount = i;
+	}
+	public static void setTotalRunning() {
+		programsRunningCount++;
+	}
+	public static void resetRunningPrograms() {
+		programsRunningCount = 0;
+		programsTotalCount = 0;
+	}
+	public static String setProgramRunningInfo() {
+		String running = String.valueOf(programsRunningCount);
+		String total = String.valueOf(programsTotalCount);
+		String retValue = running + " / " + total;
+		lblCurrentRunning.setText(retValue);
+		return retValue;		
+	}
+	
 }
 
 

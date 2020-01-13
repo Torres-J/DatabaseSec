@@ -57,7 +57,10 @@ public class SocketsClient {
 				}
 			}
 		});
+		
 	}
+	
+	
 	
 	public void sendData(String s) {
 		try {
@@ -82,11 +85,10 @@ public class SocketsClient {
 	// Switch statement for commands go here
 	private void caseStatement(String str) throws UnknownHostException, IOException {
 		String[] command = str.split(",");
-		if (command[0].startsWith("setTargetHost")) {
-			setTargetHost(command[1]);
-		} else if (command[0].startsWith("test")) {
-			sendData("Huray");
+		switch (command[0]) {
+		case "checkIn" : sendData("checkingIn,0"); break;
 		}
+		
 	}
 
 }

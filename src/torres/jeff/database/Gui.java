@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,7 +41,7 @@ public class Gui extends JFrame {
 	private ExecutorService execDBBackupNow;
 	private static boolean threadsEnabled;
 	private static boolean stigCheckerEnabled = false;
-
+	
 
 	private static JProgressBar progressBar;
 	private static int progressCount;
@@ -53,7 +54,7 @@ public class Gui extends JFrame {
 				try {
 					Gui frame = new Gui(db, stigUpdater, bI, acasObject, socket);
 					frame.setVisible(true);
-					
+					frame.setLocationRelativeTo(null);
 					frame.addWindowListener(new java.awt.event.WindowAdapter() {
 					    @Override
 					    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -460,10 +461,18 @@ public class Gui extends JFrame {
 		btnStigChecker.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				StigCheckManagerDialog dialog = new StigCheckManagerDialog(db, socket);
-				dialog.setVisible(true);
-				dialog.setResizable(false);
-				dialog.setLocationRelativeTo(contentPane);
+				StigCheckManagerDialog dialog;
+				try {
+					dialog = new StigCheckManagerDialog(db, socket);
+					dialog.setLocationRelativeTo(null);
+					dialog.setVisible(true);
+					dialog.setResizable(false);
+					//dialog.setLocationRelativeTo(contentPane);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		});
 		btnStigChecker.setFont(new Font("Tahoma", Font.PLAIN, 10));
@@ -563,6 +572,7 @@ public class Gui extends JFrame {
 			Thread.sleep(2000);		
 	    }
 	}
+	
 }
 
 

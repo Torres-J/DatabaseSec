@@ -61,9 +61,7 @@ public class ProgramDeployer {
 							LocalDate currentDate = LocalDate.now();							
 							ArrayList<String> eval = RegistryChecks.winCurrentVersion(hos[0]);
 							if (eval.get(0).contains("ERROR:")) {
-								
-								db.createStatement().execute("UPDATE ASSET_LIST SET LastScanDate = '"+ currentDate +"', ERROR_REASON = 'Insufficient Permissions' WHERE HostName = '" + hos[0] + "'");
-								 
+								db.createStatement().execute("UPDATE ASSET_LIST SET LastScanDate = '"+ currentDate +"', ERROR_REASON = 'Insufficient Permissions' WHERE HostName = '" + hos[0] + "'");			 
 								//db.createStatement().execute("UPDATE ASSET_LIST SET LastScanDate = NULL WHERE HostName = '" + hos[0] + "'");
 								System.out.println(hos[0] + ": contained error");
 								break;
