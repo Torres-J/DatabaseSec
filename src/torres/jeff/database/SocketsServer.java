@@ -24,6 +24,7 @@ public class SocketsServer {
 	private String targetHost;
 	private String hostnameRecieved;
 	private Connection db;
+	private boolean programShutDown = false;
 	
 	public SocketsServer(Connection dbo) {
 		db = dbo;
@@ -46,6 +47,7 @@ public class SocketsServer {
 								BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
 								String str = in.readLine();
 								setTargetHost(hostnameRecieved);
+								System.out.println(str);
 								caseStatement(str);
 								break;
 						} catch (Exception e) {
@@ -78,10 +80,7 @@ public class SocketsServer {
 								host = "127.0.0.1,0";
 							}
 							String[] input = host.split(",");
-							socOutput = new Socket(input[0], 20128);
-							PrintWriter out = new PrintWriter(socOutput.getOutputStream(), true);
-							out.println("checkIn");
-							socOutput.close();
+							sendCustomData(input[0], "checkIn");
 						}	
 				} catch (Exception e) {
 				}
@@ -100,6 +99,7 @@ public class SocketsServer {
 			String[] command = str.split(",");
 			switch (command[0]) {
 			case "checkingIn" : StigCheckManagerDialog.setTotalRunning(); break;
+			case "shuttingDown" : setTargetShutdown(true); break;
 			}
 			
 		}
@@ -115,6 +115,21 @@ public class SocketsServer {
 		}
 		}
 	
+	private void sendCustomData(String host, String s) {
+		try {
+			socOutput = new Socket(host, 20128);
+			PrintWriter out = new PrintWriter(socOutput.getOutputStream(), true);
+			out.println(s);
+			socOutput.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		}
+	
+	public void sendShutdown(String host) {
+		sendCustomData(host, "shutdown,0");
+	}
+	
 	public void setLocalPort(int port) {
 		localPort = port;
 	}
@@ -122,7 +137,12 @@ public class SocketsServer {
 	public void setTargetHost(String host) {
 		targetHost = host;
 	}
-	
+	public void setTargetShutdown(boolean b) {
+		programShutDown = b;
+	}
+	public boolean targetShutdown() {
+		return programShutDown;
+	}
 
 	
 

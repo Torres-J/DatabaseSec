@@ -21,6 +21,7 @@ public class SocketsClient {
 	private String targetHost;
 	private String hostnameRecieved;
 	private Connection db;
+	private boolean processingShutdown = false;
 	
 	public SocketsClient(Connection dbo) {
 		db = dbo;
@@ -35,6 +36,7 @@ public class SocketsClient {
 					while (true) {
 						soc = ss.accept();
 						while (true) {
+							processingShutdown = true;
 							try {
 								hostnameRecieved = soc.getInetAddress().getHostName();
 							} catch (Exception e) {
@@ -46,14 +48,15 @@ public class SocketsClient {
 							BufferedReader in = new BufferedReader(new InputStreamReader(soc.getInputStream()));
 							String str = in.readLine();
 							setTargetHost(hostnameRecieved);
-							caseStatement(str);
+							caseStatement(str);	
+							processingShutdown = false;
 							break;
 							
 						}
 					}
 				}
 				catch (Exception e) {	
-					e.printStackTrace();
+					processingShutdown = false;
 				}
 			}
 		});
@@ -87,8 +90,16 @@ public class SocketsClient {
 		String[] command = str.split(",");
 		switch (command[0]) {
 		case "checkIn" : sendData("checkingIn,0"); break;
+		case "shutdown" : exitProgram(); break;
 		}
-		
+	}
+	
+	private void exitProgram() {
+		if (processingShutdown == true) {
+			sendData("shuttingDown,0");
+			System.exit(0);
+		} else {
+		}
 	}
 
 }

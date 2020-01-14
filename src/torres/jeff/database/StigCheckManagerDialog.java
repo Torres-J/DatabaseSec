@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalTime;
@@ -35,6 +37,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.springframework.util.FileSystemUtils;
+
 import javax.swing.SwingConstants;
 
 public class StigCheckManagerDialog extends JDialog {
@@ -140,25 +146,51 @@ public class StigCheckManagerDialog extends JDialog {
 							if (confirmBox == JOptionPane.YES_OPTION) {
 								if (!(str == "null")) {
 									String[] filePathSplit = str.split(",");
-									Process p = Runtime.getRuntime().exec("cmd.exe /c taskkill /S " + filePathSplit[0] + " /f /FI \"windowtitle eq AutoSTIG*\"");
+									socket.sendShutdown(filePathSplit[0]);
 									Thread.sleep(4000);
-									db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE Stig_Checker_Hostnames = '" + str + "'");									
-									
-									File file = new File(filePathSplit[1]);
-									if (file.isDirectory()) {
-										for (File c : file.listFiles()) {
-											c.delete();
+									if (socket.targetShutdown()) {
+										socket.setTargetShutdown(false);
+										File file = new File(filePathSplit[1]);
+										if (file.exists()) {
+											boolean success = FileSystemUtils.deleteRecursively(file);
+											if (success) {
+												db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE Stig_Checker_Hostnames = '" + str + "'");
+												JOptionPane.showMessageDialog(null, "Deletion Successful");
+											} else if (!success) {
+												JOptionPane.showMessageDialog(null, "Deletion Unsuccessful");
+											}
+										} else if (!file.exists()) {
+											db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE Stig_Checker_Hostnames = '" + str + "'");
+											JOptionPane.showMessageDialog(null, "Files On Record Do Not Exist");
+										}
+										
+										
+									} else if (!socket.targetShutdown()) {
+										socket.setTargetShutdown(false);
+										File file = new File(filePathSplit[1]);
+										if (file.exists()) {
+											boolean success = FileSystemUtils.deleteRecursively(file);
+											if (success) {
+												db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE Stig_Checker_Hostnames = '" + str + "'");
+												JOptionPane.showMessageDialog(null, "Deletion Successful");
+											} else if (!success) {
+												JOptionPane.showMessageDialog(null, "Deletion Unsuccessful");
+											}
+										}else if (!file.exists()) {
+											db.createStatement().execute("DELETE FROM DBO.CONFIG WHERE Stig_Checker_Hostnames = '" + str + "'");
+											JOptionPane.showMessageDialog(null, "Files On Record Do Not Exist");
 										}
 									}
-									file.delete();
-									JOptionPane.showMessageDialog(null, "Deletion Successful");
+									
 								}
 							}
 						}	
-					} catch (SQLException | IOException e) {
+					} catch (SQLException e) {
+						socket.setTargetShutdown(false);
 						JOptionPane.showMessageDialog(null, "Deletion Unsuccessful For Uknown Reason");
 						e.printStackTrace();
 					} catch (InterruptedException e) {
+						socket.setTargetShutdown(false);
 						JOptionPane.showMessageDialog(null, "Task Could Not Be Killed On Remote Server");
 					}
 				}
@@ -173,8 +205,6 @@ public class StigCheckManagerDialog extends JDialog {
 					
 					String hostname;
 					String path;
-					String userName = null;
-					String password = null;
 					JTextField userNameField = new JTextField();
 					JTextField passwordField = new JPasswordField();
 					
@@ -314,6 +344,71 @@ public class StigCheckManagerDialog extends JDialog {
 			stigCheckerEnabled = stigsEnabled;
 			lblCurrentRunning.setText(setProgramRunningInfo());
 			
+			JButton btnImportHosts = new JButton("Import Targets");
+			btnImportHosts.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					JOptionPane.showMessageDialog(null, "Choose a CSV with HostNames for AutoSTIG to scan.\n"
+							+ "HostNames are appended to the current list.\n"
+							+ "HostNames should be in the first column.");
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setCurrentDirectory(new File(System.getProperty("user.dir").toString()));
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV File", "csv");
+					fileChooser.setFileFilter(filter);
+					if (fileChooser.showSaveDialog(fileChooser) == fileChooser.APPROVE_OPTION) {
+						File file = new File(fileChooser.getSelectedFile().toString());
+						BufferedReader csvReader = null;
+				    	PreparedStatement pS;
+						try {
+							pS = db.prepareStatement("INSERT INTO dbo.AutoSTIG_Targets (Host_Name, Latest_Version) VALUES (?,?)");
+							csvReader = new BufferedReader(new FileReader(file));	
+							String row;
+							//db.createStatement().execute("DELETE FROM DBO.AutoSTIG_Targets");
+							while ((row = csvReader.readLine()) != null) {
+								String hostName = row.toUpperCase();
+								pS.setString(1, hostName);
+								pS.setString(2, "No");
+								pS.addBatch();
+							}
+							pS.executeBatch();
+							csvReader.close();
+							JOptionPane.showMessageDialog(null, "HostNames Added");
+							//file.delete();
+					} catch (Exception e) {
+						try {
+							csvReader.close();
+							JOptionPane.showMessageDialog(null, "Error Adding HostNames Ensure CSV Format is Correct");
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						e.printStackTrace();
+						}
+					}
+				}
+			});
+			btnImportHosts.setFont(new Font("Tahoma", Font.PLAIN, 10));
+			btnImportHosts.setBounds(10, 216, 122, 39);
+			contentPanel.add(btnImportHosts);
+			
+			JButton btnRemoveTargets = new JButton("Remove Targets");
+			btnRemoveTargets.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					String[] buttons = { "Yes", "No"};
+					int returnValue = JOptionPane.showOptionDialog(null, "Delete All AutoSTIG Assets?", "Option Pane ", JOptionPane.PLAIN_MESSAGE, 0, null, buttons, buttons);
+					if (returnValue == 0) {
+						try {
+							db.createStatement().execute("DELETE FROM DBO.AutoSTIG_Targets");
+							JOptionPane.showMessageDialog(null, "HostNames Removed");
+						} catch (SQLException e) {
+							JOptionPane.showMessageDialog(null, "Error Removing HostNames");
+						}
+					} 					
+				}
+			});
+			btnRemoveTargets.setFont(new Font("Tahoma", Font.PLAIN, 10));
+			btnRemoveTargets.setBounds(179, 216, 122, 39);
+			contentPanel.add(btnRemoveTargets);
+			
 			
 	    } catch (Exception e) {
 	    	e.printStackTrace();
@@ -383,7 +478,6 @@ public class StigCheckManagerDialog extends JDialog {
 		lblCurrentRunning.setText(retValue);
 		return retValue;		
 	}
-	
 }
 
 

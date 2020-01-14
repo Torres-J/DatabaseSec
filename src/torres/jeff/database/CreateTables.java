@@ -187,7 +187,14 @@ public class CreateTables  {
 					+ "Severity varchar(15),"
 					+ "Total_Possible int)");
 		} catch (Exception e) {
-			
+		}
+		try {
+			db.createStatement().execute("create table DBO.AutoSTIG_Targets (HostName varchar(255),"
+					+ " LastScanDate DATE,"
+					+ " ERROR_REASON varchar(255),"
+					+ " PINGABLE varchar(3),"
+					+ " Latest_Version varchar(3))");
+		} catch (Exception e){
 		}
 	}
 }
