@@ -1,8 +1,6 @@
 package torres.jeff.database;
 
 import java.awt.BorderLayout;
-import java.awt.FileDialog;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -22,8 +20,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -36,12 +32,11 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.springframework.util.FileSystemUtils;
-
-import javax.swing.SwingConstants;
 
 public class StigCheckManagerDialog extends JDialog {
 
@@ -448,6 +443,7 @@ public class StigCheckManagerDialog extends JDialog {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		URL url = classLoader.getResource("RunnableJars/AutoSTIG.exe");
 		File file = new File(url.toURI().getPath());
+		file.setExecutable(true);
 		if (file.exists()) {
 			Path source = file.toPath();
 			String realTarget = path + "\\AutoSTIG.exe";
