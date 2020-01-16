@@ -1,11 +1,11 @@
 ----------------------------------------------------------------
-Wed Jan 15 09:40:12 EST 2020:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-016f-a9a5-c8cb-000007287318 
-on database directory C:\Users\Torre\git\DatabaseSec\VulnerabilityDB with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
-Loaded from file:/C:/Users/Torre/git/DatabaseSec/lib/derby.jar
+Wed Jan 15 11:16:38 EST 2020:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-016f-a9fe-1427-0000072809d8 
+on database directory C:\Users\Torre\git\repository\DatabaseSec\VulnerabilityDB with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
+Loaded from file:/C:/Users/Torre/git/repository/DatabaseSec/lib/derby.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_231-b11
-user.dir=C:\Users\Torre\git\DatabaseSec
+user.dir=C:\Users\Torre\git\repository\DatabaseSec
 os.name=Windows 10
 os.arch=amd64
 os.version=10.0

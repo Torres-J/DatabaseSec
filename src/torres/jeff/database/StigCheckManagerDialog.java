@@ -22,6 +22,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
@@ -37,6 +38,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.springframework.util.FileSystemUtils;
+import javax.swing.border.LineBorder;
+import java.awt.Color;
 
 public class StigCheckManagerDialog extends JDialog {
 
@@ -67,11 +70,14 @@ public class StigCheckManagerDialog extends JDialog {
 	 * @throws URISyntaxException 
 	 */
 	public StigCheckManagerDialog(Connection db, SocketsServer socket) throws URISyntaxException {
-		
+		setTitle("AutoSTIG Manager");
+		ImageIcon img = new ImageIcon(this.getClass().getResource("/images/logo.png"));	
+		setIconImage(img.getImage());
 		setModal(true);
 		setBounds(100, 100, 327, 417);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPanel.setForeground(new Color(240, 255, 255));
+		contentPanel.setBorder(new LineBorder(Color.RED, 2));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
@@ -115,9 +121,9 @@ public class StigCheckManagerDialog extends JDialog {
 			lblDaysSince.setBounds(167, 88, 134, 14);
 			contentPanel.add(lblDaysSince);
 			
-			JLabel lblNewLabel = new JLabel("Amount of Programs to Run");
+			JLabel lblNewLabel = new JLabel("Programs Configuration");
 			lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			lblNewLabel.setBounds(10, 141, 291, 14);
+			lblNewLabel.setBounds(10, 203, 291, 14);
 			contentPanel.add(lblNewLabel);
 			
 			JButton btnDeletePrograms = new JButton("Delete Programs");
@@ -191,7 +197,7 @@ public class StigCheckManagerDialog extends JDialog {
 				}
 			});
 			btnDeletePrograms.setFont(new Font("Tahoma", Font.PLAIN, 10));
-			btnDeletePrograms.setBounds(179, 166, 122, 39);
+			btnDeletePrograms.setBounds(179, 228, 122, 39);
 			contentPanel.add(btnDeletePrograms);
 			
 			JButton btnHostnames = new JButton("Add Programs");
@@ -322,7 +328,7 @@ public class StigCheckManagerDialog extends JDialog {
 				}
 			});
 			btnHostnames.setFont(new Font("Tahoma", Font.PLAIN, 10));
-			btnHostnames.setBounds(10, 166, 122, 39);
+			btnHostnames.setBounds(10, 228, 122, 39);
 			contentPanel.add(btnHostnames);
 			
 			JLabel lblProgramsRunning = new JLabel("Programs Running");
@@ -382,7 +388,7 @@ public class StigCheckManagerDialog extends JDialog {
 				}
 			});
 			btnImportHosts.setFont(new Font("Tahoma", Font.PLAIN, 10));
-			btnImportHosts.setBounds(10, 216, 122, 39);
+			btnImportHosts.setBounds(10, 278, 122, 39);
 			contentPanel.add(btnImportHosts);
 			
 			JButton btnRemoveTargets = new JButton("Remove Targets");
@@ -401,8 +407,13 @@ public class StigCheckManagerDialog extends JDialog {
 				}
 			});
 			btnRemoveTargets.setFont(new Font("Tahoma", Font.PLAIN, 10));
-			btnRemoveTargets.setBounds(179, 216, 122, 39);
+			btnRemoveTargets.setBounds(179, 278, 122, 39);
 			contentPanel.add(btnRemoveTargets);
+			
+			JButton btnUpdate = new JButton("Update");
+			btnUpdate.setFont(new Font("Tahoma", Font.PLAIN, 10));
+			btnUpdate.setBounds(99, 112, 104, 20);
+			contentPanel.add(btnUpdate);
 			
 			
 	    } catch (Exception e) {

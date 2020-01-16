@@ -98,7 +98,7 @@ public class Gui extends JFrame {
 		setForeground(new Color(240, 255, 255));
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setBounds(100, 100, 325, 487);
+		setBounds(100, 100, 325, 569);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 250, 250));
 		contentPane.setForeground(new Color(240, 248, 255));
@@ -118,7 +118,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewXccdfDirectory.setBounds(10, 397, 137, 39);
+		btnNewXccdfDirectory.setBounds(10, 476, 137, 39);
 		contentPane.add(btnNewXccdfDirectory);
 		
 		JButton btnNewCklDirectory = new JButton("New CKL Directory");
@@ -133,7 +133,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewCklDirectory.setBounds(10, 347, 137, 39);
+		btnNewCklDirectory.setBounds(10, 426, 137, 39);
 		contentPane.add(btnNewCklDirectory);
 		
 		JButton btnNewStigDirectory = new JButton("New STIG Directory");
@@ -148,7 +148,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewStigDirectory.setBounds(10, 297, 137, 39);
+		btnNewStigDirectory.setBounds(10, 376, 137, 39);
 		contentPane.add(btnNewStigDirectory);
 		
 		JButton btnNewBiDirectory = new JButton("New BI Directory");
@@ -163,7 +163,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewBiDirectory.setBounds(171, 297, 137, 39);
+		btnNewBiDirectory.setBounds(171, 376, 137, 39);
 		contentPane.add(btnNewBiDirectory);
 		
 		JButton btnNewAcasDirectory = new JButton("New ACAS Directory");
@@ -179,7 +179,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewAcasDirectory.setBounds(171, 347, 137, 39);
+		btnNewAcasDirectory.setBounds(171, 426, 137, 39);
 		contentPane.add(btnNewAcasDirectory);
 		
 		JButton btnNewAssetDirectory = new JButton("New Asset Directory");
@@ -194,7 +194,7 @@ public class Gui extends JFrame {
 				}
 			}
 		});
-		btnNewAssetDirectory.setBounds(171, 397, 137, 39);
+		btnNewAssetDirectory.setBounds(171, 476, 137, 39);
 		contentPane.add(btnNewAssetDirectory);
 		
 		JButton btnChangeRunInterval = new JButton("Change Run Interval");
@@ -278,7 +278,7 @@ public class Gui extends JFrame {
 			}
 		});
 		btnChangeRunInterval.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnChangeRunInterval.setBounds(10, 146, 137, 39);
+		btnChangeRunInterval.setBounds(10, 175, 137, 39);
 		contentPane.add(btnChangeRunInterval);
 		
 		progressBar = new JProgressBar();
@@ -288,7 +288,7 @@ public class Gui extends JFrame {
 		progressBar.setString("Waiting");
 		progressBar.setStringPainted(true);
 		progressBar.setMaximum(9);
-		progressBar.setBounds(71, 36, 176, 31);
+		progressBar.setBounds(70, 83, 176, 31);
 		contentPane.add(progressBar);
 		
 		JButton btnRunNow = new JButton("Run Now");
@@ -305,13 +305,13 @@ public class Gui extends JFrame {
 			}
 		});
 		btnRunNow.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnRunNow.setBounds(10, 96, 137, 39);
+		btnRunNow.setBounds(10, 125, 137, 39);
 		contentPane.add(btnRunNow);
 		
 		JLabel lblWorkflowStatus = new JLabel("Workflow Status");
 		lblWorkflowStatus.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		lblWorkflowStatus.setHorizontalAlignment(SwingConstants.CENTER);
-		lblWorkflowStatus.setBounds(71, 11, 176, 25);
+		lblWorkflowStatus.setBounds(70, 58, 176, 25);
 		contentPane.add(lblWorkflowStatus);
 		
 		JButton btnNewBackupDirectory = new JButton("New Backup Directory");
@@ -326,7 +326,7 @@ public class Gui extends JFrame {
 			}
 		});
 		btnNewBackupDirectory.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnNewBackupDirectory.setBounds(93, 247, 137, 39);
+		btnNewBackupDirectory.setBounds(93, 326, 137, 39);
 		contentPane.add(btnNewBackupDirectory);
 		
 		JToggleButton tglbtnDisableAutomation = new JToggleButton("Disable Automation");
@@ -373,7 +373,7 @@ public class Gui extends JFrame {
 			}
 		});
 		tglbtnDisableAutomation.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		tglbtnDisableAutomation.setBounds(171, 146, 137, 39);
+		tglbtnDisableAutomation.setBounds(171, 175, 137, 39);
 		contentPane.add(tglbtnDisableAutomation);
 		
 		JButton btnBackupDatabase = new JButton("Backup Database");
@@ -393,7 +393,7 @@ public class Gui extends JFrame {
 			}
 		});
 		btnBackupDatabase.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnBackupDatabase.setBounds(171, 96, 137, 39);
+		btnBackupDatabase.setBounds(171, 125, 137, 39);
 		contentPane.add(btnBackupDatabase);
 		
 		JButton btnDeleteStigs = new JButton("Delete STIG's");
@@ -454,7 +454,7 @@ public class Gui extends JFrame {
 			}
 		});
 		btnDeleteStigs.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnDeleteStigs.setBounds(10, 197, 137, 39);
+		btnDeleteStigs.setBounds(10, 226, 137, 39);
 		contentPane.add(btnDeleteStigs);
 		
 		JButton btnStigChecker = new JButton("STIG Checker");
@@ -476,8 +476,30 @@ public class Gui extends JFrame {
 			}
 		});
 		btnStigChecker.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		btnStigChecker.setBounds(171, 197, 137, 39);
+		btnStigChecker.setBounds(171, 226, 137, 39);
 		contentPane.add(btnStigChecker);
+		
+		JLabel lblCybersecPathEditor = new JLabel("CyberSec Path Editor");
+		lblCybersecPathEditor.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblCybersecPathEditor.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCybersecPathEditor.setBounds(10, 276, 298, 31);
+		contentPane.add(lblCybersecPathEditor);
+		
+		JLabel label = new JLabel("________________________________________");
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setBounds(10, 301, 298, 14);
+		contentPane.add(label);
+		
+		JLabel lblCybersecOperations = new JLabel("CyberSec Operations");
+		lblCybersecOperations.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCybersecOperations.setFont(new Font("Tahoma", Font.PLAIN, 16));
+		lblCybersecOperations.setBounds(10, 16, 298, 31);
+		contentPane.add(lblCybersecOperations);
+		
+		JLabel label_1 = new JLabel("________________________________________");
+		label_1.setHorizontalAlignment(SwingConstants.CENTER);
+		label_1.setBounds(10, 40, 298, 14);
+		contentPane.add(label_1);
 		
 		// This executes the workflow thread
 		startExecutorService(db, stigUpdater, acasObject, bI);
@@ -572,7 +594,6 @@ public class Gui extends JFrame {
 			Thread.sleep(2000);		
 	    }
 	}
-	
 }
 
 
