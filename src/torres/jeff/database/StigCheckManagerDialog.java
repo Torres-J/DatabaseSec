@@ -6,10 +6,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.CopyOption;
@@ -37,6 +40,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.util.FileSystemUtils;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
@@ -292,8 +296,8 @@ public class StigCheckManagerDialog extends JDialog {
 															break;
 														}
 													}
-												} catch (SQLException | URISyntaxException | IOException e) {
-													e.printStackTrace();
+												} catch (SQLException | IOException e) {
+													
 													JOptionPane.showMessageDialog(null, "Error(193): Something Went Wrong");
 												}
 											}
@@ -446,22 +450,31 @@ public class StigCheckManagerDialog extends JDialog {
 	    });
 	}
 	
-	private static void transportJar(String path) throws URISyntaxException, IOException {
-		CopyOption[] options = new CopyOption[] {
-				StandardCopyOption.COPY_ATTRIBUTES,
-				StandardCopyOption.REPLACE_EXISTING
-				};
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-		URL url = classLoader.getResource("RunnableJars/AutoSTIG.exe");
-		File file = new File(url.toURI().getPath());
-		file.setExecutable(true);
-		if (file.exists()) {
-			Path source = file.toPath();
+	public void transportJar(String path) {
+		try {
+			CopyOption[] options = new CopyOption[] {
+					StandardCopyOption.COPY_ATTRIBUTES,
+					StandardCopyOption.REPLACE_EXISTING 
+					};
+			
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			InputStream in = classLoader.getResourceAsStream("RunnableJars/AutoSTIG.exe");	
 			String realTarget = path + "\\AutoSTIG.exe";
-			Path destination = new File(realTarget).toPath();
-			Files.copy(source, destination, options);
-			}
+			FileOutputStream out = new FileOutputStream(new File(realTarget));
+			IOUtils.copy(in, out);
+			in.close();
+			out.close();
+			
+
+		} catch (Exception e) {
+			StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			String exceptionAsString = sw.toString();
+			JOptionPane.showMessageDialog(null, exceptionAsString);
 		}
+		}
+	
+			
 	private static String getPsExecLocation() throws URISyntaxException {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		URL url = classLoader.getResource("PSExec/PsExec.exe");

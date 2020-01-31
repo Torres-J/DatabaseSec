@@ -61,8 +61,23 @@ public class Triggers {
 					+ "WHERE DATE_FOUND NOT IN (SELECT MIN(DATE_FOUND) FROM DBO.Completed " 
 					+ "GROUP BY HOST_NAME, V_ID, STIG)");
 					
-		} catch (Exception e) {
-			
+		} catch (Exception e) {	
+		}
+		
+		
+		
+		
+		try {
+			// After insert on completed table, the LATEST files are purged
+			db.createStatement().execute("CREATE TRIGGER deleteMetrics "
+					+ "AFTER INSERT ON dbo.metrics "
+					+ "REFERENCING NEW AS NEWROW "
+					+ "FOR EACH ROW "
+					+ "DELETE FROM dbo.Completed "
+					+ "WHERE HOST_NAME NOT IN (SELECT HOST_NAME FROM DBO.ASSETS)");
+					
+	} catch (Exception e) {
+		e.printStackTrace();
 		}
 		*/
 	}

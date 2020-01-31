@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class ScheduledTasks {
@@ -51,28 +52,38 @@ public class ScheduledTasks {
 						    		// Imports new asset files that were imported before
 						    		Gui.addProgress();
 						    		Asset_Importer.importAssets(db);
-						    		// Imports the STIG's from the STIG Drop folder
-						    		Gui.addProgress();
-						    		stigUpdater.unzip(db);
-						    		// Parses CKL's
-						    		Gui.addProgress();
-						    		CKL_Parser.CKLParserStart(db);
-						    		// Parses xccdf from SCAP
-						    		Gui.addProgress();
-						    		XccdfReader.go(db);
-						    		// After the import of CKL's and XCCDF files, the workflow keeps the first occurrence of a vulnerability by host and the date it was remediated
-						    		Gui.addProgress();
-						    		MainWorkflow.startWorkflow(db);
-						    		// Parses ACAS file. Data is always overwritten. The file must always contain all current vulnerabilities
-						    		Gui.addProgress();
-						    		acas.beginParsingACAS();
-						    		// Writes the primary tables. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
-						    		Gui.addProgress();
-						    		bI.exportBiFiles(db);
-						    		Gui.addProgress();
-						    		Gui.resetProgress();
-						    		workflowRunning = false;
-						    		System.out.println("done");
+						    		boolean assetsImported = assetsImportedBool(db);
+						    		if (assetsImported == true) {
+						    			// Imports the STIG's from the STIG Drop folder
+							    		Gui.addProgress();
+							    		stigUpdater.unzip(db);
+							    		// Parses CKL's
+							    		Gui.addProgress();
+							    		CKL_Parser.CKLParserStart(db);
+							    		// Parses xccdf from SCAP
+							    		Gui.addProgress();
+							    		XccdfReader.go(db);
+							    		// After the import of CKL's and XCCDF files, the workflow keeps the first occurrence of a vulnerability by host and the date it was remediated
+							    		Gui.addProgress();
+							    		MainWorkflow.startWorkflow(db);
+							    		// Parses ACAS file. Data is always overwritten. The file must always contain all current vulnerabilities
+							    		Gui.addProgress();
+							    		acas.beginParsingACAS();
+							    		// Writes the primary tables. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
+							    		Gui.addProgress();
+							    		bI.exportBiFiles(db);
+							    		Gui.addProgress();
+							    		Gui.resetProgress();
+							    		workflowRunning = false;
+							    		System.out.println("done");
+						    		} else if (assetsImported == false) {
+						    			workflowRunning = false;
+						    			JOptionPane.showMessageDialog(null, "Asset Import Failed\n"
+						    												+ "To Prevent Data Loss\n"
+						    												+ "Workflow Terminated");
+						    			Gui.resetProgress();
+						    		}
+					
 					    		}
 							} catch (SQLException | IOException | InterruptedException | ParserConfigurationException e) {
 								// For troubleshooting purposes. Only visible by me during program execution in Eclipse IDE
@@ -97,28 +108,37 @@ public class ScheduledTasks {
 		    		// Imports new asset files that were imported before
 		    		Gui.addProgress();
 		    		Asset_Importer.importAssets(db);
-		    		// Imports the STIG's from the STIG Drop folder
-		    		Gui.addProgress();
-		    		stigUpdater.unzip(db);
-		    		// Parses CKL's
-		    		Gui.addProgress();
-		    		CKL_Parser.CKLParserStart(db);
-		    		// Parses xccdf from SCAP
-		    		Gui.addProgress();
-		    		XccdfReader.go(db);
-		    		// After the import of CKL's and XCCDF files, the workflow keeps the first occurrence of a vulnerability by host and the date it was remediated
-		    		Gui.addProgress();
-		    		MainWorkflow.startWorkflow(db);
-		    		// Parses ACAS file. Data is always overwritten. The file must always contain all current vulnerabilities
-		    		Gui.addProgress();
-		    		acas.beginParsingACAS();
-		    		// Writes the primary tables. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
-		    		Gui.addProgress();
-		    		bI.exportBiFiles(db);
-		    		Gui.addProgress();
-		    		Gui.resetProgress();
-		    		System.out.println("done");
-		    		workflowRunning = false;
+		    		boolean assetsImported = assetsImportedBool(db);
+		    		if (assetsImported == true) {
+		    			// Imports the STIG's from the STIG Drop folder
+			    		Gui.addProgress();
+			    		stigUpdater.unzip(db);
+			    		// Parses CKL's
+			    		Gui.addProgress();
+			    		CKL_Parser.CKLParserStart(db);
+			    		// Parses xccdf from SCAP
+			    		Gui.addProgress();
+			    		XccdfReader.go(db);
+			    		// After the import of CKL's and XCCDF files, the workflow keeps the first occurrence of a vulnerability by host and the date it was remediated
+			    		Gui.addProgress();
+			    		MainWorkflow.startWorkflow(db);
+			    		// Parses ACAS file. Data is always overwritten. The file must always contain all current vulnerabilities
+			    		Gui.addProgress();
+			    		acas.beginParsingACAS();
+			    		// Writes the primary tables. If a CSV is open for some reason, blocking the writing of a new file, the current connections will be closed so new CSV's can be written
+			    		Gui.addProgress();
+			    		bI.exportBiFiles(db);
+			    		Gui.addProgress();
+			    		Gui.resetProgress();
+			    		workflowRunning = false;
+			    		System.out.println("done");
+		    		} else if (assetsImported == false) {
+		    			workflowRunning = false;
+		    			JOptionPane.showMessageDialog(null, "Asset Import Failed\n"
+		    												+ "To Prevent Data Loss\n"
+		    												+ "Workflow Terminated");
+		    			Gui.resetProgress();
+		    		}
 				} else if (workflowRunning == true) {
 					
 				}
@@ -176,6 +196,17 @@ public class ScheduledTasks {
 	}
 	public static void continueOrStopWhileLoop(boolean bool) {
 		continueLoop = bool;
+	}
+	private static boolean assetsImportedBool(Connection db) throws SQLException {
+		ResultSet rs = db.createStatement().executeQuery("SELECT * FROM DBO.ASSETS");
+		boolean rsEmpty = true;
+		if (!rs.next()) {
+			rsEmpty = false;
+		}
+		System.out.println(rsEmpty);
+
+		return rsEmpty;
+		
 	}
 	
 }

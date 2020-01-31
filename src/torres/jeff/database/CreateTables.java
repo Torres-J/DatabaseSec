@@ -14,7 +14,14 @@ public class CreateTables  {
 			db.createStatement().execute("CREATE TABLE dbo.Metrics (CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), OU varchar(255), Host_Name varchar(150), Date_Found DATE NOT NULL DEFAULT CURRENT_DATE)");
 		} catch (Exception e) {
 
-		} try {
+		} 
+		try {
+			db.createStatement().execute("CREATE TABLE dbo.Metrics_Temp (CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), OU varchar(255), Host_Name varchar(150), Date_Found DATE NOT NULL DEFAULT CURRENT_DATE)");
+		} catch (Exception e) {
+
+		} 
+		
+		try {
 			db.createStatement().execute("CREATE TABLE dbo.Assets (CUST_ID INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1), OU varchar(255), Host_Name varchar(150))");
 		} catch (Exception e) {
 			

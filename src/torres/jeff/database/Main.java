@@ -5,7 +5,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -21,6 +24,8 @@ public class Main {
 		CreateTables.createTables(db);
 		// Creates the directory and folders from where the JAR file is ran to interact with the DB
 		CreateFolderStructure.createFolders(db);
+		// Sets up the triggers
+		Triggers.setTriggers(db);
 		// Creates the STIG Importer object so that it doesn't have to be instantiated again
 		StigUpdater stigUpdater = new StigUpdater();
 		// Creates the bI Object that allows exporting of data to CSV
@@ -33,5 +38,6 @@ public class Main {
 		startSocket.startServer();
 		// Starts the GUI
 		Gui.run(db, stigUpdater, bI, acas, startSocket);
+
 	}
 }
